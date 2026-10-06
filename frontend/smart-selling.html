@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Selling Decision Support — KrushiSetu USP</title>
+  <meta name="description" content="Transparent Net Realization calculation comparing buyer bids, freight, commissions, and perishability risks. The farmer makes the final decision." />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/ai-tools.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🌾</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Decision Support Engine</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+        <li><a href="smart-selling.html" class="nav-link active">Smart Selling USP</a></li>
+        <li><a href="crop-doctor.html" class="nav-link">Crop Doctor</a></li>
+        <li><a href="market-ai.html" class="nav-link">Market Intelligence</a></li>
+        <li><a href="orders.html" class="nav-link">Orders</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="farmer-dashboard.html" class="btn btn-outline">Farmer Dashboard</a>
+        <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & USP Explanation Banner -->
+  <section class="smart-selling-hero">
+    <div class="container" style="text-align: center; max-width: 900px;">
+      <span class="badge" style="background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); margin-bottom: 0.75rem;">
+        ⭐ Flagship Innovation
+      </span>
+      <h1>Smart Selling Decision Support</h1>
+      <p style="color: var(--slate-300); font-size: 1.1rem; margin-top: 0.5rem;">
+        Never be misled by deceptive nominal prices. We calculate transportation distance, mandi commissions, and perishability risks to show you the <strong>actual money in your pocket</strong>.
+      </p>
+
+      <div class="formula-card">
+        <div class="formula-node">
+          <span style="color: #cbd5e1; font-size: 0.85rem;">Expected Revenue</span>
+          <span class="formula-val" style="color: #60a5fa;">₹ Price × Qty</span>
+        </div>
+        <div class="formula-sign">−</div>
+        <div class="formula-node">
+          <span style="color: #cbd5e1; font-size: 0.85rem;">Transportation Cost</span>
+          <span class="formula-val" style="color: #f87171;">Distance × Rate</span>
+        </div>
+        <div class="formula-sign">−</div>
+        <div class="formula-node">
+          <span style="color: #cbd5e1; font-size: 0.85rem;">Other Selling Costs</span>
+          <span class="formula-val" style="color: #fbbf24;">Handling + Risk + Cess</span>
+        </div>
+        <div class="formula-sign">=</div>
+        <div class="formula-node">
+          <span style="color: #ffffff; font-size: 0.85rem;">Expected Net Realization</span>
+          <span class="formula-val" style="color: #4ade80;">💰 In-Pocket Net Profit</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Container -->
+  <main class="container" style="padding-bottom: 4rem;">
+    
+    <!-- User Input Controls for Smart Selling -->
+    <div class="card card-body" style="margin-top: -2rem; position: relative; z-index: 10; box-shadow: var(--shadow-xl);">
+      <h3 style="font-size: 1.25rem; color: var(--slate-900); margin-bottom: 1rem;">
+        ⚡ Configure Harvest Lot to Compare Buyer Opportunities
+      </h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; align-items: flex-end;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="calc-crop">🌾 Commodity / Crop</label>
+          <select class="form-select" id="calc-crop" onchange="recalculateSmartSelling()">
+            <option value="Tomato" selected>🍅 Tomato (Hybrid)</option>
+            <option value="Wheat">🌾 Wheat (Organic Sharbati)</option>
+            <option value="Onion">🧅 Red Onion (Nashik)</option>
+            <option value="Potato">🥔 Potato (Jyoti)</option>
+            <option value="Soybean">🌱 Yellow Soybean</option>
+            <option value="Cotton">☁️ Medium Staple Cotton</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="calc-quantity">⚖️ Harvest Quantity (kg)</label>
+          <input type="number" id="calc-quantity" class="form-control" value="500" min="50" step="50" oninput="recalculateSmartSelling()" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="calc-grade">⭐ Quality Grade</label>
+          <select class="form-select" id="calc-grade" onchange="recalculateSmartSelling()">
+            <option value="Grade A+" selected>Grade A+ (Premium)</option>
+            <option value="Grade A">Grade A (Standard High)</option>
+            <option value="Standard">Standard Commercial</option>
+            <option value="Grade B">Grade B (Processing)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">📍 Farmer Origin Hub</label>
+          <input type="text" id="calc-origin" class="form-control" value="Nashik (Maharashtra)" readonly style="background: var(--slate-100);" />
+        </div>
+
+        <div>
+          <button type="button" class="btn btn-primary" onclick="recalculateSmartSelling()" style="width: 100%; height: 46px; font-weight: 700;">
+            🔄 Refresh Analysis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mandatory Decision-Support Guidance Notice -->
+    <div style="margin-top: 1.5rem; background: var(--amber-50, #fffbeb); border: 1px solid var(--amber-200, #fde68a); border-left: 5px solid #d97706; padding: 1rem 1.25rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.75rem;">
+      <span style="font-size: 1.5rem;">💡</span>
+      <div style="font-size: 0.9rem; color: #92400e; line-height: 1.5;">
+        <strong>Decision-Support Notice:</strong> We do NOT simply recommend the highest nominal price, nor do we make automated selling decisions. We transparently compute your net freight, commissions, and travel risks so <strong>you have full clarity to make the most profitable final decision</strong>.
+      </div>
+    </div>
+
+    <!-- Smart Selling Interactive Cards -->
+    <div style="margin-top: 2rem;">
+      <h3 style="font-size: 1.3rem; color: var(--slate-900); margin-bottom: 1rem;">
+        📊 Side-by-Side Buyer Opportunity Cards
+      </h3>
+      <div class="comparison-grid" id="smart-selling-cards">
+        <!-- Injected dynamically via smart-selling.js -->
+      </div>
+    </div>
+
+    <!-- SMART SELLING COMPARISON TABLE -->
+    <div class="card" style="margin-top: 2.5rem; padding: 1.75rem; background: var(--white); box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <h3 style="font-size: 1.3rem; color: var(--slate-900); margin: 0;">
+            📑 Comprehensive Smart Selling Table
+          </h3>
+          <p style="color: var(--slate-500); font-size: 0.88rem; margin-top: 0.2rem;">
+            Transparent multi-variable breakdown across distance, freight, gross revenue, and in-pocket net profit.
+          </p>
+        </div>
+        <span class="badge badge-success" id="table-crop-badge">Tomato • 500 kg</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="data-table" id="smart-selling-table">
+          <thead>
+            <tr>
+              <th>Buyer</th>
+              <th>Location</th>
+              <th>Crop</th>
+              <th>Quantity</th>
+              <th>Price/kg</th>
+              <th>Distance</th>
+              <th>Transport Cost</th>
+              <th>Other Costs</th>
+              <th>Expected Revenue</th>
+              <th>Expected Net Realization</th>
+              <th>Demand Trend</th>
+              <th>Expected Price Range</th>
+            </tr>
+          </thead>
+          <tbody id="smart-selling-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION: "Why this estimate?" & "How this estimate was calculated" -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+      
+      <!-- Why this estimate? -->
+      <div class="card card-body" style="padding: 1.75rem; background: var(--white);">
+        <h3 style="font-size: 1.2rem; color: var(--slate-900); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🔍</span> Why This Estimate?
+        </h3>
+        <p style="color: var(--slate-600); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
+          Our recommendation engine evaluates 8 distinct market indicators to rank true net value:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.88rem; color: var(--slate-700);" id="why-factors-container">
+          <div style="background: var(--slate-50); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+            <strong>📍 Distance & Freight Tariff:</strong> Shorter hauls minimize fuel costs and road tolls.
+          </div>
+          <div style="background: var(--slate-50); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+            <strong>📈 Demand & Price Forecast:</strong> Regional demand level indicates whether to sell immediately or batch.
+          </div>
+          <div style="background: var(--slate-50); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+            <strong>🛡️ 0% Direct Commission:</strong> Direct KrushiSetu trades eliminate traditional 6.5% mandi broker deductions.
+          </div>
+          <div style="background: var(--slate-50); padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+            <strong>⏱️ Payment Security:</strong> Instant Escrow eliminates debtor default risk.
+          </div>
+        </div>
+      </div>
+
+      <!-- How this estimate was calculated -->
+      <div class="card card-body" style="padding: 1.75rem; background: var(--white);">
+        <h3 style="font-size: 1.2rem; color: var(--slate-900); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>📐</span> How This Estimate Was Calculated
+        </h3>
+        <p style="color: var(--slate-600); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
+          Step-by-step mathematical calculation for transparent decision-making:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.88rem; color: var(--slate-700);">
+          <div style="background: #f0fdf4; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border: 1px solid #bbf7d0;">
+            <strong>Step 1: Expected Revenue</strong> = Offered Price/kg × Quantity (kg)
+          </div>
+          <div style="background: #fef2f2; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border: 1px solid #fecaca;">
+            <strong>Step 2: Transportation Cost</strong> = (Haul Distance × Rate/km) + Loading Handling
+          </div>
+          <div style="background: #fffbeb; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border: 1px solid #fde68a;">
+            <strong>Step 3: Other Costs</strong> = Packaging + Mandi Cess + Spoilage Risk Allowance
+          </div>
+          <div style="background: #eff6ff; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); border: 1px solid #bfdbfe;">
+            <strong>Step 4: Expected Net Realization</strong> = Step 1 − Step 2 − Step 3
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION: Dedicated Transportation & Logistics Estimator -->
+    <div class="card card-body" style="margin-top: 3rem; padding: 2rem; background: var(--white); box-shadow: var(--shadow-md); border-top: 4px solid var(--primary-600);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <span class="badge badge-primary" style="margin-bottom: 0.5rem;">Logistics Intelligence</span>
+          <h2 style="font-size: 1.45rem; color: var(--slate-900); margin: 0;">
+            🚚 Dedicated Transportation & Freight Cost Calculator
+          </h2>
+          <p style="color: var(--slate-600); font-size: 0.95rem; margin-top: 0.25rem;">
+            Calculate realistic road haulage distances, vehicle capacity sizing, and accurate transport tariffs.
+          </p>
+        </div>
+
+        <div style="background: var(--emerald-50, #ecfdf5); border: 1px solid var(--emerald-200, #a7f3d0); padding: 0.6rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.2rem;">🔒</span>
+          <div style="font-size: 0.82rem; color: #065f46;">
+            <strong>Location Privacy Protected:</strong>
+            <div>High-level district routing used. Exact coordinates kept private.</div>
+          </div>
+        </div>
+      </div>
+
+      <form id="transport-calc-form" onsubmit="event.preventDefault(); calculateTransportEstimate();">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; align-items: flex-end; margin-bottom: 1.5rem;">
+          
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="t-origin">📍 Origin (Farmer Hub):</label>
+            <select class="form-select" id="t-origin">
+              <option value="Nashik" selected>Nashik (Maharashtra)</option>
+              <option value="Pune">Pune (Maharashtra)</option>
+              <option value="Lasalgaon">Lasalgaon (Maharashtra)</option>
+              <option value="Nagpur">Nagpur (Maharashtra)</option>
+              <option value="Indore">Indore (Madhya Pradesh)</option>
+              <option value="Guntur">Guntur (Andhra Pradesh)</option>
+              <option value="Surat">Surat (Gujarat)</option>
+              <option value="Ahmedabad">Ahmedabad (Gujarat)</option>
+              <option value="Karnal">Karnal (Haryana)</option>
+              <option value="Lucknow">Lucknow (Uttar Pradesh)</option>
+              <option value="Bangalore">Bangalore (Karnataka)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="t-destination">📍 Destination (Buyer Mandi):</label>
+            <select class="form-select" id="t-destination">
+              <option value="Mumbai" selected>Mumbai / Vashi APMC (Maharashtra)</option>
+              <option value="Pune">Pune APMC (Maharashtra)</option>
+              <option value="Nashik">Nashik APMC (Maharashtra)</option>
+              <option value="Indore">Indore APMC (Madhya Pradesh)</option>
+              <option value="Delhi">Delhi Azadpur Mandi</option>
+              <option value="Surat">Surat Mandi (Gujarat)</option>
+              <option value="Bangalore">Bangalore APMC (Karnataka)</option>
+              <option value="Hyderabad">Hyderabad Mandi (Telangana)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="t-quantity">⚖️ Quantity (kg):</label>
+            <input type="number" id="t-quantity" class="form-control" value="500" min="50" max="100000" step="50" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="t-vehicle">🚛 Vehicle Selection:</label>
+            <select class="form-select" id="t-vehicle">
+              <option value="" selected>Auto-Select Optimal Vehicle</option>
+              <option value="mini_truck">Tata Ace / Mini Truck (Up to 1,000 kg)</option>
+              <option value="pickup">Bolero Pickup (Up to 2,500 kg)</option>
+              <option value="medium_truck">Medium 14-19ft Truck (Up to 6,000 kg)</option>
+              <option value="heavy_truck">Heavy Multi-Axle (Up to 16,000 kg)</option>
+              <option value="reefer">Cold-Chain Reefer (Temperature Controlled / 5,000 kg)</option>
+            </select>
+          </div>
+
+          <div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; height: 46px; font-weight: 700;">
+              ⚡ Calculate Freight
+            </button>
+          </div>
+
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" id="t-cold-chain" />
+            <span>❄️ Require Temperature-Controlled Cold Chain (Perishables)</span>
+          </label>
+        </div>
+      </form>
+
+      <!-- Transportation Result Display -->
+      <div id="transport-result" style="display: none; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-lg); padding: 1.5rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="background: var(--white); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--slate-500); font-weight: 700;">Road Haul Distance</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); margin: 0.2rem 0;" id="res-distance">185.0 km</div>
+            <div style="font-size: 0.8rem; color: var(--slate-500);" id="res-transit">~4.4 hrs transit</div>
+          </div>
+
+          <div style="background: var(--white); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--slate-500); font-weight: 700;">Assigned Vehicle</div>
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--primary-700); margin: 0.2rem 0;" id="res-vehicle">Mini Truck / Tata Ace</div>
+            <div style="font-size: 0.8rem; color: var(--slate-500);" id="res-trips">1 trip required</div>
+          </div>
+
+          <div style="background: var(--white); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--slate-500); font-weight: 700;">Effective Rate / kg</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900); margin: 0.2rem 0;" id="res-rate-kg">₹1.60 / kg</div>
+            <div style="font-size: 0.8rem; color: var(--slate-500);" id="res-rate-qtl">₹160.00 / quintal</div>
+          </div>
+
+          <div style="background: var(--emerald-50, #ecfdf5); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--emerald-200, #a7f3d0);">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: #065f46; font-weight: 700;">Total Estimated Cost</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #047857; margin: 0.2rem 0;" id="res-total-cost">₹800.00</div>
+            <div style="font-size: 0.8rem; color: #065f46;">All-inclusive freight & handling</div>
+          </div>
+        </div>
+
+        <!-- Detailed Itemized Breakdown -->
+        <div style="background: var(--white); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200); font-size: 0.9rem;">
+          <strong style="color: var(--slate-900); display: block; margin-bottom: 0.75rem;">🧾 Itemized Logistics Breakdown:</strong>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; color: var(--slate-700);">
+            <div>Base Distance Freight: <strong id="res-base-freight">₹600.00</strong></div>
+            <div>Loading & Handling Charge: <strong id="res-handling">₹200.00</strong></div>
+            <div>Highway Toll & Permit Allowance: <strong id="res-toll">₹0.00</strong></div>
+            <div>Cold Storage Surcharge: <strong id="res-cooling">₹0.00</strong></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 KrushiSetu Smart Selling Decision Support</div>
+        <div>Empowering farmers with transparent net margin economics • Farmer retains final decision</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/smart-selling.js"></script>
+</body>
+</html>

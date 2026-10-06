@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produce Trading Floor — KrushiSetu Marketplace</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/marketplace.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🌾</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Direct Trading Floor</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="marketplace.html" class="nav-link active">Marketplace</a></li>
+        <li><a href="smart-selling.html" class="nav-link">Smart Selling USP</a></li>
+        <li><a href="crop-doctor.html" class="nav-link">Crop Doctor</a></li>
+        <li><a href="market-ai.html" class="nav-link">Market Intelligence</a></li>
+        <li><a href="orders.html" class="nav-link">Orders</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="farmer-dashboard.html" class="btn btn-outline btn-sm">Farmer Console</a>
+        <a href="buyer-dashboard.html" class="btn btn-outline-primary btn-sm">Buyer Portal</a>
+        <button class="menu-toggle">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Marketplace Layout -->
+  <div class="container">
+    <div class="marketplace-layout">
+      
+      <!-- Multi-Attribute Filters Sidebar -->
+      <aside class="filter-sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.15rem; color: var(--slate-900);">Filters</h3>
+          <span style="font-size: 0.82rem; color: var(--primary-700); cursor: pointer; font-weight: 600;" onclick="resetAllFilters()">Reset All</span>
+        </div>
+
+        <!-- Filter by Category -->
+        <div class="filter-section">
+          <div class="filter-title">Crop Category</div>
+          <div class="filter-options">
+            <label class="filter-checkbox">
+              <input type="checkbox" class="category-filter" value="Grains" /> Grains & Cereals
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="category-filter" value="Vegetables" /> Fresh Vegetables
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="category-filter" value="Fruits" /> Orchard Fruits
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="category-filter" value="Pulses" /> Pulses & Lentils
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="category-filter" value="Oilseeds" /> Oilseeds
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="category-filter" value="Spices" /> Spices & Condiments
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter by Quality / Grade -->
+        <div class="filter-section">
+          <div class="filter-title">Quality & Grade</div>
+          <div class="filter-options">
+            <label class="filter-checkbox">
+              <input type="checkbox" class="grade-filter" value="Grade A+" /> Grade A+ (Premium)
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="grade-filter" value="Grade A" /> Grade A (Standard High)
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="grade-filter" value="Export Grade" /> Export Grade
+            </label>
+            <label class="filter-checkbox">
+              <input type="checkbox" class="grade-filter" value="Grade B" /> Grade B (Processing)
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter by Price -->
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>Max Price per kg</span>
+            <span id="price-val-display" style="color: var(--primary-700); font-weight: 700;">₹150</span>
+          </div>
+          <input type="range" id="filter-max-price" min="10" max="250" value="150" step="5" style="width: 100%; accent-color: var(--primary-600);" />
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--slate-500); margin-top: 0.25rem;">
+            <span>₹10</span>
+            <span>₹125</span>
+            <span>₹250</span>
+          </div>
+        </div>
+
+        <!-- Filter by Location / District -->
+        <div class="filter-section">
+          <div class="filter-title">Location / District</div>
+          <input type="text" id="filter-location" class="form-control" placeholder="e.g. Nashik, Pune, Nagpur" style="font-size: 0.88rem; padding: 0.5rem 0.75rem;" />
+        </div>
+      </aside>
+
+      <!-- Main Marketplace Listing Section -->
+      <main>
+        <!-- Toolbar & Search -->
+        <div class="market-toolbar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="market-search" class="form-control" placeholder="Search wheat, onions, oranges, farmer name..." />
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <span style="font-size: 0.85rem; color: var(--slate-500); white-space: nowrap;">Sort by:</span>
+            <select class="form-select" id="market-sort" style="width: auto; padding: 0.5rem 1rem;">
+              <option value="newest">Newest Listed</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="qty_desc">Available Quantity: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Produce Cards Grid -->
+        <div class="products-grid" id="produce-grid">
+          <!-- Rendered via JS -->
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div class="modal-overlay" id="product-detail-modal">
+    <div class="modal-content" id="product-detail-content" style="max-width: 650px;">
+      <!-- Populated via marketplace.js -->
+    </div>
+  </div>
+
+  <!-- Direct Procurement Modal -->
+  <div class="modal-overlay" id="order-modal">
+    <div class="modal-content" id="modal-body-content">
+      <!-- Populated via marketplace.js -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 KrushiSetu Direct Produce Trading Floor</div>
+        <div>All trades secured with Smart Escrow Contracts</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/marketplace.js"></script>
+</body>
+</html>

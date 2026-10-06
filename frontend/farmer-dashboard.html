@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farmer AI Dashboard — KrushiSetu</title>
+  <meta name="description" content="AI-Powered Farmer Command Center: My Crops, Crop Health, Soil Nutrients, Demand Forecast, Price Forecast, and Smart Selling Net Realization Decision Support." />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/marketplace.css" />
+  <link rel="stylesheet" href="css/ai-tools.css" />
+  <style>
+    .crop-actions-btn-group {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .availability-pill {
+      cursor: pointer;
+      user-select: none;
+    }
+    .farmer-ai-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .ai-summary-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .ai-summary-card.accent-green { border-top: 4px solid var(--primary-600); }
+    .ai-summary-card.accent-amber { border-top: 4px solid var(--accent-amber); }
+    .ai-summary-card.accent-blue { border-top: 4px solid #3b82f6; }
+    .ai-summary-card.accent-purple { border-top: 4px solid #8b5cf6; }
+
+    .ai-card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--slate-500);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+    .ai-card-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 0.35rem;
+    }
+    .ai-card-desc {
+      font-size: 0.85rem;
+      color: var(--slate-600);
+      line-height: 1.45;
+      margin-bottom: 0.85rem;
+      flex: 1;
+    }
+    .smart-selling-decision-box {
+      background: linear-gradient(135deg, #064e3b, #0f766e);
+      color: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+    .opportunity-card-mini {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      backdrop-filter: blur(8px);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .opportunity-card-mini:hover {
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-2px);
+    }
+    .opportunity-card-mini.recommended {
+      border: 2px solid #4ade80;
+      background: rgba(34, 197, 94, 0.15);
+      position: relative;
+    }
+    .mini-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      display: inline-block;
+    }
+    .math-step-pill {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.85rem;
+      font-size: 0.82rem;
+      margin-top: 0.4rem;
+    }
+    .active-lot-selector {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .lot-chip {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .lot-chip:hover, .lot-chip.active {
+      background: #4ade80;
+      color: #064e3b;
+      border-color: #4ade80;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🌾</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Farmer AI Portal</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="smart-selling.html" class="btn btn-outline-primary btn-sm">⚡ Smart Selling USP</a>
+        <a href="marketplace.html" class="btn btn-outline btn-sm">🛒 Public Trading Floor</a>
+        <button class="btn btn-outline-primary btn-sm" onclick="API.logout()">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar with required navigation sections -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-user-card">
+        <div class="user-avatar" id="farmer-avatar">👨‍🌾</div>
+        <div>
+          <strong style="display: block; font-size: 0.95rem; color: var(--slate-900);" id="farmer-display-name">Ramesh Patil</strong>
+          <span style="font-size: 0.78rem; color: var(--primary-700); font-weight: 600;" id="farmer-location-tag">Verified Farmer • Nashik</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-item active"><a href="farmer-dashboard.html">📊 Unified AI Dashboard</a></li>
+        <li class="sidebar-item"><a href="#smart-selling-hub">⚡ Smart Selling USP</a></li>
+        <li class="sidebar-item"><a href="#my-crops-section" onclick="scrollToMyCrops()">🌱 My Crops</a></li>
+        <li class="sidebar-item"><a href="#" onclick="openAddCropModal()">➕ Add Crop Lot</a></li>
+        <li class="sidebar-item"><a href="marketplace.html">🛒 Marketplace</a></li>
+        <li class="sidebar-item"><a href="crop-doctor.html">🔬 Crop Doctor (Disease)</a></li>
+        <li class="sidebar-item"><a href="crop-doctor.html#soil">🧪 Soil & Nutrients</a></li>
+        <li class="sidebar-item"><a href="market-ai.html">📈 Market Intelligence</a></li>
+        <li class="sidebar-item"><a href="orders.html">📦 Orders & Escrow <span class="sidebar-badge">3</span></a></li>
+        <li class="sidebar-item"><a href="profile.html">👤 Profile & Settings</a></li>
+      </ul>
+
+      <div style="margin-top: auto; padding-top: 1.5rem;">
+        <div style="background: var(--primary-50); border: 1px solid var(--primary-200); border-radius: var(--radius-md); padding: 0.75rem; font-size: 0.78rem; color: var(--primary-800);">
+          🔒 <strong>Privacy Guard Active:</strong> Your crop analytics and counterparty negotiations are cryptographically protected.
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+      <div class="dashboard-header">
+        <div>
+          <h1 id="farmer-greeting">Namaste, Farmer 🙏</h1>
+          <p>Your unified intelligence dashboard: Live crops, AI leaf health, soil fertility, price forecasting, and net profit comparisons.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="openAddCropModal()">➕ Add New Crop Lot</button>
+          <a href="smart-selling.html" class="btn btn-outline-primary">⚡ Full Smart Selling Engine</a>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Total Listed Crops</span>
+            <h2 id="kpi-total-crops">4 Lots</h2>
+            <small style="color: var(--primary-600); font-weight: 600;">17,700 kg harvest volume</small>
+          </div>
+          <div class="stat-icon icon-green">🌾</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Active Live Listings</span>
+            <h2 id="kpi-active-listings">3 Active</h2>
+            <small style="color: var(--primary-600);">Available on marketplace</small>
+          </div>
+          <div class="stat-icon icon-blue">🛒</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Pending Escrow Orders</span>
+            <h2>2 Orders</h2>
+            <small style="color: var(--accent-amber); font-weight: 600;">₹1,29,750 in escrow</small>
+          </div>
+          <div class="stat-icon icon-amber">⏳</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Completed Realization</span>
+            <h2>8 Deals</h2>
+            <small style="color: var(--primary-700); font-weight: 600;">₹4,82,500 net earned</small>
+          </div>
+          <div class="stat-icon icon-green">✅</div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           MAIN USP: UNIFIED SMART SELLING DECISION SUPPORT & AI SYNTHESIS HUB
+           ========================================================================== -->
+      <section class="smart-selling-decision-box" id="smart-selling-hub">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <span class="mini-badge" style="background: rgba(74, 222, 128, 0.25); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); margin-bottom: 0.5rem;">
+              🌟 Flagship USP: Smart Selling Decision Support
+            </span>
+            <h2 style="font-size: 1.6rem; color: #fff; margin: 0.25rem 0;">
+              AI Decision Support & Net Realization Optimizer
+            </h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; margin: 0;">
+              Transparently compares buyer offers by subtracting freight and handling to reveal your <strong>true in-pocket profit</strong>.
+            </p>
+          </div>
+
+          <!-- Active Harvest Lot Switcher -->
+          <div>
+            <span style="display:block; font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-bottom: 0.35rem;">
+              Select Harvest Lot to Analyze:
+            </span>
+            <div class="active-lot-selector">
+              <button class="lot-chip active" onclick="switchLot('Tomato', 500, 'Grade A', 30.0, this)">🍅 Tomato — 500 kg</button>
+              <button class="lot-chip" onclick="switchLot('Wheat', 2000, 'Grade A+', 38.5, this)">🌾 Wheat — 2,000 kg</button>
+              <button class="lot-chip" onclick="switchLot('Onion', 1500, 'Standard', 26.0, this)">🧅 Onion — 1,500 kg</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-Pillar Integrated AI Intelligence Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          
+          <!-- Pillar 1: Crop Health -->
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">🔬 Crop Health</span>
+              <span class="mini-badge" id="hub-health-badge" style="background: #fef08a; color: #854d0e;">Notice</span>
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: #fff;" id="hub-health-title">Possible disease detected</div>
+            <p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.25rem;" id="hub-health-desc">
+              Early blight spotted on lower foliage (91% confidence). Apply recommended copper fungicide.
+            </p>
+            <a href="crop-doctor.html" style="color: #4ade80; font-size: 0.8rem; font-weight: 700; text-decoration: underline;">View Diagnosis & Remedy →</a>
+          </div>
+
+          <!-- Pillar 2: Soil Status & Nutrients -->
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">🧪 Soil Status & NPK</span>
+              <span class="mini-badge" style="background: #bbf7d0; color: #166534;">Score: 82/100</span>
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: #fff;" id="hub-soil-title">pH 6.8 • Nitrogen Low</div>
+            <p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.25rem;" id="hub-soil-desc">
+              Top-dress 25 kg/acre Urea before next irrigation cycle to maximize yield weight.
+            </p>
+            <a href="crop-doctor.html#soil" style="color: #4ade80; font-size: 0.8rem; font-weight: 700; text-decoration: underline;">Full Nutrient Plan →</a>
+          </div>
+
+          <!-- Pillar 3: Demand Forecast -->
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">📈 Demand Forecast</span>
+              <span class="mini-badge" style="background: #fed7aa; color: #9a3412;">Bullish Trend</span>
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: #fff;" id="hub-demand-title">Likely Increasing</div>
+            <p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.25rem;" id="hub-demand-desc">
+              AI model projects high retail and processing demand across Maharashtra mandis over the next 15 days.
+            </p>
+            <a href="market-ai.html" style="color: #4ade80; font-size: 0.8rem; font-weight: 700; text-decoration: underline;">Analyze Market Trends →</a>
+          </div>
+
+          <!-- Pillar 4: Price Forecast -->
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-lg); padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; font-weight: 700;">🏷️ Expected Price</span>
+              <span class="mini-badge" style="background: #bbf7d0; color: #166534;">AI Calibrated</span>
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: #fff;" id="hub-price-range">₹27.00 – ₹31.00 / kg</div>
+            <p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.25rem;" id="hub-price-desc">
+              Modal benchmark ₹28.50/kg. Upward momentum supported by low wholesale arrivals.
+            </p>
+            <a href="market-ai.html" style="color: #4ade80; font-size: 0.8rem; font-weight: 700; text-decoration: underline;">Price Trajectory Chart →</a>
+          </div>
+
+        </div>
+
+        <!-- Side-by-Side Buyer Opportunity Comparison (The Core Engine Showcase) -->
+        <div style="margin-top: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="font-size: 1.25rem; color: #fff; margin: 0;">
+              ⚡ Matched Buyer Bids & Net Realization Comparison (<span id="hub-crop-header">Tomato — 500 kg</span>)
+            </h3>
+            <span style="font-size: 0.82rem; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 0.25rem 0.75rem; border-radius: var(--radius-full);">
+              ⚠️ We do not simply recommend the highest nominal price. Net profit in-hand is king!
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1.25rem;" id="hub-buyer-cards">
+            <!-- Dynamic comparison cards loaded via JS -->
+          </div>
+        </div>
+
+        <!-- Formula and Calculation Transparency Accordion -->
+        <div style="margin-top: 1.5rem; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <strong style="color: #4ade80; font-size: 0.95rem;">📐 How This Estimate Was Calculated:</strong>
+            <span style="color: #cbd5e1; font-size: 0.85rem; font-family: monospace;">Expected Net Realization = Expected Revenue − Transport Cost − Other Selling Costs</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-top: 0.85rem;">
+            <div class="math-step-pill">
+              <strong style="color: #60a5fa;">Step 1: Expected Revenue</strong><br />
+              = Offered Price/kg × Quantity (e.g. ₹28 × 500 kg = ₹14,000)
+            </div>
+            <div class="math-step-pill">
+              <strong style="color: #f87171;">Step 2: Transport Freight</strong><br />
+              = Distance (km) × Vehicle Rate + Loading/Unloading
+            </div>
+            <div class="math-step-pill">
+              <strong style="color: #fbbf24;">Step 3: Other Selling Costs</strong><br />
+              = Packaging + APMC Mandi Cess + Perishability Spoilage Risk
+            </div>
+            <div class="math-step-pill">
+              <strong style="color: #4ade80;">Step 4: Net Realization</strong><br />
+              = Revenue − Transport − Other Costs (Actual money in your bank!)
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandatory Decision-Support Notice -->
+        <div style="margin-top: 1rem; background: rgba(217, 119, 6, 0.2); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: var(--radius-md); padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.25rem;">⚖️</span>
+          <p style="font-size: 0.84rem; color: #fde68a; margin: 0; line-height: 1.45;">
+            <strong>Important Decision-Support Principle:</strong> KrushiSetu is an intelligent advisory tool that transparently reveals hidden freight deductions. The system never makes automated or irreversible selling decisions. <strong>You as the farmer always make the final decision.</strong>
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================================
+           FULL SMART SELLING TABLE & FACTOR ATTRIBUTION ("WHY THIS ESTIMATE?")
+           ========================================================================== -->
+      <div class="card card-body" style="background: var(--white); box-shadow: var(--shadow-sm); margin-bottom: 2.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <h3 style="font-size: 1.3rem; color: var(--slate-900); margin: 0;">
+              📑 Smart Selling Comparison Table
+            </h3>
+            <p style="color: var(--slate-500); font-size: 0.88rem; margin-top: 0.2rem;">
+              Side-by-side transparent metrics for all registered buyer opportunities.
+            </p>
+          </div>
+          <span class="badge badge-success" id="hub-table-badge">Tomato • 500 kg • Grade A</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table" id="dashboard-smart-selling-table">
+            <thead>
+              <tr>
+                <th>Buyer</th>
+                <th>Location</th>
+                <th>Crop</th>
+                <th>Quantity</th>
+                <th>Price/kg</th>
+                <th>Distance</th>
+                <th>Transport Cost</th>
+                <th>Other Costs</th>
+                <th>Expected Revenue</th>
+                <th>Expected Net Realization</th>
+                <th>Demand Trend</th>
+                <th>Expected Price Range</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-table-body">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- "Why this estimate?" Attribution Cards -->
+        <div style="margin-top: 1.75rem; border-top: 1px solid var(--slate-200); padding-top: 1.25rem;">
+          <h4 style="font-size: 1rem; color: var(--slate-900); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🔍</span> "Why This Estimate?" Key Evaluation Factors:
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem; font-size: 0.84rem; color: var(--slate-700);">
+            <div style="background: var(--slate-50); padding: 0.75rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+              <strong>🏷️ Current Listed Price:</strong> Tracks live APMC modal benchmarks vs. buyer bid rate.
+            </div>
+            <div style="background: var(--slate-50); padding: 0.75rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+              <strong>📈 Demand & Price Range:</strong> Forecasts 15-day price momentum to prevent premature distress selling.
+            </div>
+            <div style="background: var(--slate-50); padding: 0.75rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+              <strong>🚚 Distance & Transport Tariff:</strong> Accurately accounts for road km, tolls, and return-trip rates.
+            </div>
+            <div style="background: var(--slate-50); padding: 0.75rem; border-radius: var(--radius-md); border-left: 3px solid var(--primary-600);">
+              <strong>🛡️ 0% KrushiSetu Commission:</strong> Eliminates traditional 6.5% mandi broker deduction.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           MY CROPS INVENTORY SECTION (Add, Edit, Delete, Status Toggle)
+           ========================================================================== -->
+      <div class="table-card" id="my-crops-section">
+        <div class="table-header">
+          <div>
+            <h3 style="font-size: 1.25rem; color: var(--slate-900);">🌱 My Listed Harvest Lots</h3>
+            <p style="font-size: 0.85rem; color: var(--slate-500);">Manage your crop inventory, update prices, or run Smart Selling on any lot</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddCropModal()">+ Add New Crop Lot</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Crop & Grade</th>
+                <th>Category</th>
+                <th>Available Quantity</th>
+                <th>Expected Price</th>
+                <th>Status</th>
+                <th>Harvest Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="my-crops-table-body">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: var(--slate-500);">
+                  Loading your crop listings...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add Crop Modal -->
+  <div class="modal-overlay" id="add-crop-modal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.35rem; color: var(--slate-900);">🌱 Add New Crop Listing</h3>
+        <span style="font-size: 1.5rem; cursor: pointer;" onclick="closeAddCropModal()">✕</span>
+      </div>
+
+      <form id="add-crop-form" onsubmit="handleCreateCrop(event)">
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Crop Name *</label>
+            <input type="text" name="crop_name" class="form-control" placeholder="e.g. Tomato (Hybrid Red)" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select name="category" class="form-select">
+              <option value="Vegetables" selected>Vegetables</option>
+              <option value="Grains">Grains & Cereals</option>
+              <option value="Fruits">Fruits</option>
+              <option value="Pulses">Pulses & Lentils</option>
+              <option value="Oilseeds">Oilseeds</option>
+              <option value="Spices">Spices</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Quantity *</label>
+            <input type="number" name="quantity" class="form-control" placeholder="e.g. 500" min="1" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit *</label>
+            <select name="unit" class="form-select">
+              <option value="kg" selected>Kilograms (kg)</option>
+              <option value="Quintals">Quintals</option>
+              <option value="Tonnes">Tonnes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expected Price / Unit (₹) *</label>
+            <input type="number" step="0.5" name="expected_price" class="form-control" placeholder="e.g. 28.5" min="0.1" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Quality Grade *</label>
+            <select name="grade" class="form-select">
+              <option value="Grade A+" selected>Grade A+ (Premium / Export)</option>
+              <option value="Grade A">Grade A (Standard High)</option>
+              <option value="Standard">Standard Commercial</option>
+              <option value="Grade B">Grade B (Processing Grade)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harvest Date</label>
+            <input type="date" name="harvest_date" class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Crop Photo (Secure Upload)</label>
+          <input type="file" id="crop-photo-input" accept="image/png, image/jpeg, image/webp" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description & Quality Notes</label>
+          <textarea name="description" class="form-control" rows="3" placeholder="Mention moisture level, firmness, packaging type..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="filter-checkbox">
+            <input type="checkbox" name="organic" checked /> 100% Organically Grown (No synthetic pesticides)
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeAddCropModal()">Cancel</button>
+          <button type="submit" id="add-crop-btn" class="btn btn-primary" style="flex:2;">Publish Crop Listing</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Crop Modal -->
+  <div class="modal-overlay" id="edit-crop-modal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.35rem; color: var(--slate-900);">✏️ Edit Crop Listing</h3>
+        <span style="font-size: 1.5rem; cursor: pointer;" onclick="closeEditCropModal()">✕</span>
+      </div>
+
+      <form id="edit-crop-form" onsubmit="handleSaveEditCrop(event)">
+        <input type="hidden" id="edit-crop-id" />
+
+        <div class="form-group">
+          <label class="form-label">Crop Name</label>
+          <input type="text" id="edit-crop-name" class="form-control" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Quantity</label>
+            <input type="number" id="edit-crop-qty" class="form-control" min="1" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expected Price / Unit (₹)</label>
+            <input type="number" step="0.5" id="edit-crop-price" class="form-control" min="0.1" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Quality Grade</label>
+            <select id="edit-crop-grade" class="form-select">
+              <option value="Grade A+">Grade A+</option>
+              <option value="Grade A">Grade A</option>
+              <option value="Standard">Standard</option>
+              <option value="Grade B">Grade B</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Availability Status</label>
+            <select id="edit-crop-avail" class="form-select">
+              <option value="Available">Available</option>
+              <option value="Sold Out">Sold Out</option>
+              <option value="Reserved">Reserved</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="edit-crop-desc" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeEditCropModal()">Cancel</button>
+          <button type="submit" id="save-edit-btn" class="btn btn-primary" style="flex:2;">Save Updates</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    let myCropsCache = [];
+    let currentLotState = {
+      crop: 'Tomato',
+      quantity: 500,
+      grade: 'Grade A',
+      price: 30.0
+    };
+
+    function scrollToMyCrops() {
+      const section = document.getElementById('my-crops-section');
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function openAddCropModal() {
+      document.getElementById('add-crop-modal').style.display = 'flex';
+    }
+
+    function closeAddCropModal() {
+      document.getElementById('add-crop-modal').style.display = 'none';
+    }
+
+    function openEditCropModal(productId) {
+      const crop = myCropsCache.find(p => p.id === productId);
+      if (!crop) return;
+
+      document.getElementById('edit-crop-id').value = crop.id;
+      document.getElementById('edit-crop-name').value = crop.crop_name || crop.name || '';
+      document.getElementById('edit-crop-qty').value = crop.quantity || '';
+      document.getElementById('edit-crop-price').value = crop.price_per_unit || crop.price || '';
+      document.getElementById('edit-crop-grade').value = crop.grade || 'Grade A';
+      document.getElementById('edit-crop-avail').value = crop.availability || 'Available';
+      document.getElementById('edit-crop-desc').value = crop.description || '';
+
+      document.getElementById('edit-crop-modal').style.display = 'flex';
+    }
+
+    function closeEditCropModal() {
+      document.getElementById('edit-crop-modal').style.display = 'none';
+    }
+
+    async function handleCreateCrop(e) {
+      e.preventDefault();
+      const form = document.getElementById('add-crop-form');
+      const formData = new FormData(form);
+      const photoInput = document.getElementById('crop-photo-input');
+      const submitBtn = document.getElementById('add-crop-btn');
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Publishing...';
+
+      try {
+        const res = await ProductsManager.createProduct(formData, photoInput);
+        showToast(res.message || 'Crop listed successfully!', 'success');
+        closeAddCropModal();
+        form.reset();
+        await loadMyCrops();
+      } catch (err) {
+        showToast(err.message || 'Failed to list crop.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Publish Crop Listing';
+      }
+    }
+
+    async function handleSaveEditCrop(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-crop-id').value;
+      const submitBtn = document.getElementById('save-edit-btn');
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Saving...';
+
+      try {
+        const updates = {
+          crop_name: document.getElementById('edit-crop-name').value,
+          quantity: parseFloat(document.getElementById('edit-crop-qty').value),
+          price_per_unit: parseFloat(document.getElementById('edit-crop-price').value),
+          grade: document.getElementById('edit-crop-grade').value,
+          availability: document.getElementById('edit-crop-avail').value,
+          description: document.getElementById('edit-crop-desc').value
+        };
+
+        await ProductsManager.updateProduct(id, updates);
+        showToast('Crop listing updated successfully!', 'success');
+        closeEditCropModal();
+        await loadMyCrops();
+      } catch (err) {
+        showToast(err.message || 'Failed to update crop.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Save Updates';
+      }
+    }
+
+    async function handleDeleteCrop(productId, cropName) {
+      if (!confirm(`Are you sure you want to remove '${cropName}' from your listings?`)) return;
+
+      try {
+        await ProductsManager.deleteProduct(productId);
+        showToast(`'${cropName}' deleted successfully.`, 'success');
+        await loadMyCrops();
+      } catch (err) {
+        showToast(err.message || 'Failed to delete crop.', 'error');
+      }
+    }
+
+    // Switch active lot for the Smart Selling Hub
+    function switchLot(crop, qty, grade, price, btnEl) {
+      document.querySelectorAll('.lot-chip').forEach(c => c.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      currentLotState = { crop, quantity: qty, grade, price };
+      document.getElementById('hub-crop-header').innerText = `${crop} — ${qty.toLocaleString()} kg`;
+      document.getElementById('hub-table-badge').innerText = `${crop} • ${qty.toLocaleString()} kg • ${grade}`;
+
+      if (crop === 'Tomato') {
+        document.getElementById('hub-health-badge').innerText = 'Disease Detected';
+        document.getElementById('hub-health-badge').style.background = '#fef08a';
+        document.getElementById('hub-health-badge').style.color = '#854d0e';
+        document.getElementById('hub-health-title').innerText = 'Possible disease detected';
+        document.getElementById('hub-health-desc').innerText = 'Early blight suspected on lower foliage (91% confidence). Copper Oxychloride recommended.';
+        document.getElementById('hub-demand-title').innerText = 'Likely Increasing';
+        document.getElementById('hub-price-range').innerText = '₹27.00 – ₹31.00 / kg';
+      } else if (crop === 'Wheat') {
+        document.getElementById('hub-health-badge').innerText = '98% Healthy';
+        document.getElementById('hub-health-badge').style.background = '#bbf7d0';
+        document.getElementById('hub-health-badge').style.color = '#166534';
+        document.getElementById('hub-health-title').innerText = 'Excellent Plant Vigor';
+        document.getElementById('hub-health-desc').innerText = 'No active pest or rust symptoms detected. Optimal moisture level at 11.8%.';
+        document.getElementById('hub-demand-title').innerText = 'Strong Flour Mill Demand';
+        document.getElementById('hub-price-range').innerText = '₹36.50 – ₹41.00 / kg';
+      } else {
+        document.getElementById('hub-health-badge').innerText = 'Healthy';
+        document.getElementById('hub-health-badge').style.background = '#bbf7d0';
+        document.getElementById('hub-health-badge').style.color = '#166534';
+        document.getElementById('hub-health-title').innerText = 'Good Quality Lot';
+        document.getElementById('hub-health-desc').innerText = 'Clean bulb curing with standard moisture.';
+        document.getElementById('hub-demand-title').innerText = 'Moderate / Stable';
+        document.getElementById('hub-price-range').innerText = '₹24.00 – ₹28.00 / kg';
+      }
+
+      calculateSmartSellingOpportunities(crop, qty, grade);
+    }
+
+    async function calculateSmartSellingOpportunities(crop, qty, grade) {
+      try {
+        const res = await fetch('/api/smart-selling/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            crop: crop,
+            quantity_kg: qty,
+            quality: grade,
+            farmer_location: 'Nashik'
+          })
+        });
+        const data = await res.json();
+        if (data && data.success && data.comparisons) {
+          renderHubBuyerCards(data.comparisons, qty, crop);
+          renderDashboardTable(data.comparisons);
+        }
+      } catch (err) {
+        console.error('Error fetching smart selling opportunities:', err);
+      }
+    }
+
+    function renderHubBuyerCards(comparisons, qty, crop) {
+      const container = document.getElementById('hub-buyer-cards');
+      if (!container) return;
+
+      container.innerHTML = comparisons.map(item => {
+        const isRec = item.is_recommended;
+        const revenue = Math.round(item.expected_revenue);
+        const transport = Math.round(item.transport_cost);
+        const other = Math.round(item.other_costs);
+        const net = Math.round(item.net_realization);
+
+        return `
+          <div class="opportunity-card-mini ${isRec ? 'recommended' : ''}">
+            ${isRec ? '<span class="mini-badge" style="background:#4ade80; color:#064e3b; margin-bottom: 0.5rem; align-self: flex-start;">⭐ Highest Net Profit Realization</span>' : '<span class="mini-badge" style="background:rgba(255,255,255,0.2); color:#fff; margin-bottom: 0.5rem; align-self: flex-start;">Alternative Offer</span>'}
+            
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <strong style="font-size: 1.1rem; color: #fff;">${item.buyer_name}</strong>
+                <div style="font-size: 0.8rem; color: #cbd5e1;">📍 ${item.location} • <strong>${item.distance_km} km</strong></div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 0.75rem; color: #94a3b8; display: block;">Bid Rate</span>
+                <strong style="font-size: 1.15rem; color: #fde047;">₹${item.offered_price_per_kg.toFixed(2)}/kg</strong>
+              </div>
+            </div>
+
+            <!-- Mathematical Deductions Breakdown -->
+            <div style="background: rgba(0,0,0,0.25); padding: 0.75rem; border-radius: var(--radius-md); margin: 0.75rem 0; font-size: 0.84rem;">
+              <div style="display:flex; justify-content:space-between; margin-bottom: 0.25rem;">
+                <span style="color: #cbd5e1;">Expected Revenue:</span>
+                <strong style="color: #60a5fa;">₹${revenue.toLocaleString('en-IN')}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom: 0.25rem;">
+                <span style="color: #fca5a5;">(-) Freight (Transport):</span>
+                <span style="color: #f87171; font-weight: 700;">₹${transport.toLocaleString('en-IN')}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom: 0.4rem;">
+                <span style="color: #fde68a;">(-) Other Costs / Spoilage:</span>
+                <span style="color: #fbbf24;">₹${other.toLocaleString('en-IN')}</span>
+              </div>
+              <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.35rem; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color: #fff; font-weight:700;">Expected Net Realization:</span>
+                <strong style="color: ${isRec ? '#4ade80' : '#fff'}; font-size: 1.15rem;">₹${net.toLocaleString('en-IN')}</strong>
+              </div>
+            </div>
+
+            <p style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.75rem;">
+              💳 <strong>Terms:</strong> ${item.payment_terms} | In-Pocket: <strong>₹${item.net_rate_per_kg.toFixed(2)}/kg</strong>
+            </p>
+
+            <button class="btn btn-sm ${isRec ? 'btn-primary' : 'btn-outline'}" style="margin-top:auto; width: 100%; font-weight: 700;" onclick="selectBuyerOffer('${item.buyer_name}', ${net})">
+              ${isRec ? '🚀 Select This Best Opportunity' : 'Select This Buyer Bid'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderDashboardTable(comparisons) {
+      const tbody = document.getElementById('dashboard-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = comparisons.map(r => {
+        const isRec = r.is_recommended;
+        const priceRange = r.expected_price_range ? r.expected_price_range.display : '₹27–₹31/kg';
+        return `
+          <tr style="${isRec ? 'background: rgba(34, 197, 94, 0.06); font-weight: 500;' : ''}">
+            <td>
+              <strong>${r.buyer_name}</strong>
+              ${isRec ? '<span class="badge badge-success" style="font-size:0.7rem; margin-left:0.35rem;">Best Net In-Pocket</span>' : ''}
+            </td>
+            <td>${r.location}</td>
+            <td>${r.crop}</td>
+            <td>${r.quantity_kg.toLocaleString()} kg</td>
+            <td><strong>₹${r.offered_price_per_kg.toFixed(2)}</strong></td>
+            <td>${r.distance_km} km</td>
+            <td style="color: var(--danger); font-weight:600;">₹${Math.round(r.transport_cost).toLocaleString('en-IN')}</td>
+            <td style="color: var(--danger);">₹${Math.round(r.other_costs).toLocaleString('en-IN')}</td>
+            <td><strong>₹${Math.round(r.expected_revenue).toLocaleString('en-IN')}</strong></td>
+            <td><strong style="color: ${isRec ? 'var(--primary-700)' : 'var(--slate-900)'}; font-size: 1.05rem;">₹${Math.round(r.net_realization).toLocaleString('en-IN')}</strong></td>
+            <td><span class="badge badge-primary">${r.demand_trend || 'Stable'}</span></td>
+            <td><small style="color: var(--slate-600);">${priceRange}</small></td>
+            <td>
+              <button class="btn btn-sm ${isRec ? 'btn-primary' : 'btn-outline'}" onclick="selectBuyerOffer('${r.buyer_name}', ${Math.round(r.net_realization)})">
+                Choose
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectBuyerOffer(buyerName, netAmount) {
+      const proceed = confirm(`Decision Support Notice:\nYou have chosen ${buyerName} with an estimated Net Realization of ₹${netAmount.toLocaleString('en-IN')}.\n\nAs the farmer, you make the final decision. Would you like to initiate contact & escrow locking for this deal?`);
+      if (proceed) {
+        showToast(`Deal initiated with ${buyerName}. Escrow contract pending verification.`, 'success');
+      }
+    }
+
+    async function loadMyCrops() {
+      const tbody = document.getElementById('my-crops-table-body');
+      try {
+        const token = API.getToken();
+        let crops = [];
+
+        if (token) {
+          const res = await ProductsManager.getMyProducts();
+          crops = res.products || [];
+        }
+
+        if (crops.length === 0) {
+          const publicRes = await ProductsManager.getMarketplaceProducts();
+          crops = (publicRes.products || []).slice(0, 4);
+        }
+
+        myCropsCache = crops;
+        document.getElementById('kpi-total-crops').innerText = `${crops.length} Lots`;
+        const activeCount = crops.filter(c => c.availability !== 'Sold Out').length;
+        document.getElementById('kpi-active-listings').innerText = `${activeCount} Active`;
+
+        if (crops.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--slate-500);">
+                No crops listed yet. Click <strong>+ Add New Crop Lot</strong> above to list your harvest!
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = crops.map(c => `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap: 0.75rem;">
+                <img src="${c.image_url || c.images?.[0] || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=120&q=80'}" 
+                     style="width: 44px; height: 44px; border-radius: var(--radius-md); object-fit: cover;" />
+                <div>
+                  <strong>${c.crop_name || c.name}</strong>
+                  <div style="font-size:0.78rem; color:var(--slate-500);">${c.grade || 'Standard'} • ${c.organic ? '🌱 Organic' : '🚜 Fresh'}</div>
+                </div>
+              </div>
+            </td>
+            <td>${c.category || 'Grains'}</td>
+            <td><strong>${(c.quantity || 0).toLocaleString()}</strong> ${c.unit || 'kg'}</td>
+            <td><strong style="color: var(--primary-800);">₹${(c.price_per_unit || c.price || 0).toFixed(2)}</strong> / ${c.unit || 'kg'}</td>
+            <td>
+              <span class="badge ${c.availability === 'Sold Out' ? 'badge-warning' : 'badge-success'} availability-pill">
+                ${c.availability || 'Available'}
+              </span>
+            </td>
+            <td><small style="color:var(--slate-500);">${c.harvest_date || 'Recent'}</small></td>
+            <td>
+              <div class="crop-actions-btn-group">
+                <button class="btn btn-outline btn-sm" onclick="openEditCropModal('${c.id}')" title="Edit">✏️</button>
+                <button class="btn btn-outline btn-sm" style="color:var(--danger); border-color:var(--danger-light);" onclick="handleDeleteCrop('${c.id}', '${c.crop_name || c.name}')" title="Delete">🗑️</button>
+                <button class="btn btn-primary btn-sm" onclick="switchLot('${(c.crop_name || c.name).split(' ')[0]}', ${c.quantity || 500}, '${c.grade || 'Grade A'}', ${c.price_per_unit || 30.0})" title="Analyze in Smart Selling">⚡ Sell</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--danger); text-align:center; padding: 1.5rem;">Error loading crops: ${err.message}</td></tr>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const token = API.getToken();
+        if (token) {
+          const profileRes = await API.getProfile();
+          if (profileRes && profileRes.user) {
+            const u = profileRes.user;
+            document.getElementById('farmer-greeting').innerText = `Namaste, ${u.full_name} 🙏`;
+            document.getElementById('farmer-display-name').innerText = u.full_name;
+            document.getElementById('farmer-location-tag').innerText = `Verified Farmer • ${u.district || u.city || 'Nashik'}, ${u.state || 'MH'}`;
+          }
+        }
+      } catch (e) {
+        console.log('Local user profile init:', e.message);
+      }
+
+      await loadMyCrops();
+      // Initialize Smart Selling with default Tomato 500 kg lot
+      calculateSmartSellingOpportunities('Tomato', 500, 'Grade A');
+    });
+  </script>
+</body>
+</html>

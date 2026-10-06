@@ -1,0 +1,75 @@
+{
+  "model_name": "KrushiSetu Demand & Price Trend Predictor",
+  "model_type": "XGBoost Regressor (Gradient Boosted Trees)",
+  "version": "1.0.0",
+  "trained_at": "2026-09-24T13:12:44.784426Z",
+  "training_samples": 81760,
+  "test_samples": 20440,
+  "metrics": {
+    "mae": 0.01,
+    "rmse": 0.021,
+    "r2_score": 1.0,
+    "directional_trend_accuracy_percent": 99.2
+  },
+  "feature_columns": [
+    "crop_encoded",
+    "location_encoded",
+    "month",
+    "day_of_year",
+    "sin_month",
+    "cos_month",
+    "temperature_c",
+    "rainfall_mm",
+    "humidity_percent",
+    "market_arrivals_quintals",
+    "regional_production_index",
+    "regional_supply_score",
+    "availability_index",
+    "historical_price_lag7",
+    "historical_price_lag14",
+    "historical_price_lag30",
+    "price_rolling_mean_7d",
+    "price_volatility_7d",
+    "festival_intensity",
+    "weather_stress_index",
+    "supply_arrival_imbalance",
+    "marketplace_search_volume",
+    "marketplace_views_volume",
+    "marketplace_orders_volume"
+  ],
+  "top_influencing_factors": [
+    {
+      "feature": "festival_intensity",
+      "importance_percent": 68.87
+    },
+    {
+      "feature": "supply_arrival_imbalance",
+      "importance_percent": 19.19
+    },
+    {
+      "feature": "weather_stress_index",
+      "importance_percent": 5.87
+    },
+    {
+      "feature": "regional_supply_score",
+      "importance_percent": 3.8
+    },
+    {
+      "feature": "availability_index",
+      "importance_percent": 1.74
+    },
+    {
+      "feature": "regional_production_index",
+      "importance_percent": 0.34
+    },
+    {
+      "feature": "marketplace_views_volume",
+      "importance_percent": 0.11
+    },
+    {
+      "feature": "marketplace_search_volume",
+      "importance_percent": 0.03
+    }
+  ],
+  "disclaimer": "Forecast \u2014 not a guarantee. Agricultural market conditions depend on dynamic weather events, transport logistics, and sudden government policy changes."
+}

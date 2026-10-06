@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Profile & Verification — KrushiSetu</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">👤</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Profile & Verification</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+        <li><a href="smart-selling.html" class="nav-link">Smart Selling USP</a></li>
+        <li><a href="farmer-dashboard.html" class="nav-link">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline-primary btn-sm" onclick="KrushiAuth.logout()">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 3rem 1.5rem 5rem; max-width: 860px;">
+    
+    <div class="card card-body" style="margin-bottom: 2rem;">
+      <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+        <div class="user-avatar" style="width: 72px; height: 72px; font-size: 2rem;">👨‍🌾</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <h1 style="font-size: 1.75rem; color: var(--slate-900);">Ramesh Patil</h1>
+            <span class="badge badge-success">✔️ Verified Farmer</span>
+          </div>
+          <p style="color: var(--slate-500); font-size: 0.9rem;">Member since August 2025 • Nashik District, Maharashtra</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="card card-body">
+      <h3 style="font-size: 1.25rem; color: var(--slate-900); margin-bottom: 1.5rem;">Farm & KYC Verification Details</h3>
+      
+      <form onsubmit="event.preventDefault(); showToast('Profile details updated successfully!', 'success');">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" value="Ramesh Patil" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Mobile</label>
+            <input type="tel" class="form-control" value="+91 98765 43210" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label">Farm Location / Village</label>
+            <input type="text" class="form-control" value="Ozar Village, Nashik, MH" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Land Holding (Acres)</label>
+            <input type="text" class="form-control" value="12.5 Acres" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Primary Crops Cultivated</label>
+          <input type="text" class="form-control" value="Organic Sharbati Wheat, Red Onions, Table Grapes" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Escrow Bank Payout Account (Aadhaar Linked)</label>
+          <input type="text" class="form-control" value="State Bank of India — A/C ••••••••••4812 (IFSC: SBIN0001234)" readonly style="background: var(--slate-100);" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+          Save Profile Updates
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 KrushiSetu User Identity & Trust Layer</div>
+        <div>Protected with end-to-end encryption</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await API.getProfile();
+        if (res && res.user) {
+          const user = res.user;
+          document.querySelector('h1').innerText = user.full_name || 'User Profile';
+          const inputs = document.querySelectorAll('.form-control');
+          if (inputs[0]) inputs[0].value = user.full_name || '';
+          if (inputs[1]) inputs[1].value = user.phone || '';
+          if (inputs[2]) inputs[2].value = `${user.village || user.city || ''}, ${user.district || ''}, ${user.state || ''}`;
+          if (inputs[3] && user.farm_size_acres) inputs[3].value = `${user.farm_size_acres} Acres`;
+          if (inputs[4] && user.primary_crops) inputs[4].value = user.primary_crops;
+        }
+      } catch (e) {
+        console.log('Profile fallback to offline view:', e.message);
+      }
+    });
+  </script>
+</body>
+</html>

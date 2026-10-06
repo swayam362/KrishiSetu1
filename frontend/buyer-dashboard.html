@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buyer Dashboard — KrushiSetu</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/marketplace.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Bulk Procurement Console</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="marketplace.html" class="btn btn-outline btn-sm">🛒 Live Produce Floor</a>
+        <button class="btn btn-outline-primary btn-sm" onclick="API.logout()">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar with all 6 required navigation sections -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-user-card" style="background: var(--earth-100); border-color: var(--earth-100);">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--earth-800), var(--earth-600));">🏢</div>
+        <div>
+          <strong style="display: block; font-size: 0.95rem; color: var(--slate-900);" id="buyer-business-name">AgroFresh Mills</strong>
+          <span style="font-size: 0.78rem; color: var(--earth-800); font-weight: 600;" id="buyer-location-tag">Verified Procurement • Pune</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-item active"><a href="buyer-dashboard.html">📊 Dashboard</a></li>
+        <li class="sidebar-item"><a href="marketplace.html">🌱 Marketplace</a></li>
+        <li class="sidebar-item"><a href="orders.html">📦 My Orders <span class="sidebar-badge">2</span></a></li>
+        <li class="sidebar-item"><a href="orders.html" onclick="showToast('Live messaging connected with 6 farmers.', 'info')">💬 Messages <span class="sidebar-badge">6</span></a></li>
+        <li class="sidebar-item"><a href="#" onclick="showToast('Average Supplier Rating: 4.9 / 5.0 (18 Reviews)', 'info')">⭐ Reviews</a></li>
+        <li class="sidebar-item"><a href="profile.html">🏢 Profile</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+      <div class="dashboard-header">
+        <div>
+          <h1 id="buyer-greeting">Procurement Hub</h1>
+          <p>Farm-direct sourcing, guaranteed escrow locks, and transparent logistics tracking.</p>
+        </div>
+        <div>
+          <a href="marketplace.html" class="btn btn-primary">➕ Source Direct Produce</a>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Grid (All Required Buyer Metrics) -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Available Products</span>
+            <h2 id="buyer-kpi-avail-products">6 Lots</h2>
+            <small style="color: var(--primary-600); font-weight: 600;">28,500 kg on trading floor</small>
+          </div>
+          <div class="stat-icon icon-green">🌾</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Recent Orders</span>
+            <h2>5 Orders</h2>
+            <small style="color: var(--primary-600);">Last 30 days volume</small>
+          </div>
+          <div class="stat-icon icon-blue">📋</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Pending Orders</span>
+            <h2>2 In-Transit</h2>
+            <small style="color: var(--accent-amber); font-weight: 600;">₹1,29,750 Escrow Locked</small>
+          </div>
+          <div class="stat-icon icon-amber">⏳</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Completed Orders</span>
+            <h2>3 Delivered</h2>
+            <small style="color: var(--primary-700); font-weight: 600;">₹1,84,000 settled</small>
+          </div>
+          <div class="stat-icon icon-earth">✅</div>
+        </div>
+      </div>
+
+      <!-- Quick Live Marketplace Feed for Procurement -->
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <h3 style="font-size: 1.25rem; color: var(--slate-900);">Available Farm Produce (Direct Sourcing)</h3>
+            <p style="font-size: 0.85rem; color: var(--slate-500);">Connect directly with verified farmers without middlemen markups</p>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline-primary btn-sm">Explore All Produce →</a>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Produce</th>
+                <th>Category</th>
+                <th>Farmer & Location</th>
+                <th>Grade</th>
+                <th>Available</th>
+                <th>Direct Rate</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="buyer-produce-feed">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: var(--slate-500);">
+                  Loading live produce feed...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const token = API.getToken();
+        if (token) {
+          const profileRes = await API.getProfile();
+          if (profileRes && profileRes.user) {
+            const u = profileRes.user;
+            document.getElementById('buyer-greeting').innerText = `Procurement Hub: ${u.business_name || u.full_name}`;
+            document.getElementById('buyer-business-name').innerText = u.business_name || u.full_name;
+            document.getElementById('buyer-location-tag').innerText = `Verified Procurement • ${u.city || u.district || 'Pune'}, ${u.state || 'MH'}`;
+          }
+        }
+
+        // Load live produce feed
+        const res = await ProductsManager.getMarketplaceProducts();
+        const products = res.products || [];
+        document.getElementById('buyer-kpi-avail-products').innerText = `${products.length} Lots`;
+
+        const tbody = document.getElementById('buyer-produce-feed');
+        if (products.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--slate-500);">No products currently listed.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = products.map(p => `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap: 0.75rem;">
+                <img src="${p.image_url || p.images?.[0] || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=120&q=80'}" 
+                     style="width: 44px; height: 44px; border-radius: var(--radius-md); object-fit: cover;" />
+                <div>
+                  <strong>${p.crop_name || p.name}</strong>
+                  <div style="font-size:0.78rem; color:var(--slate-500);">${p.organic ? '🌱 100% Organic' : '🚜 Farm Fresh'}</div>
+                </div>
+              </div>
+            </td>
+            <td>${p.category || 'Grains'}</td>
+            <td>👨‍🌾 ${p.farmer_name}<br /><small style="color:var(--slate-500);">📍 ${p.location}</small></td>
+            <td><span class="badge badge-earth">${p.grade || 'Grade A'}</span></td>
+            <td><strong>${(p.quantity || 0).toLocaleString()}</strong> ${p.unit || 'kg'}</td>
+            <td><strong style="color: var(--primary-800); font-size: 1.05rem;">₹${(p.price_per_unit || p.price || 0).toFixed(2)}</strong> / ${p.unit || 'kg'}</td>
+            <td>
+              <a href="marketplace.html?search=${encodeURIComponent(p.crop_name || p.name)}" class="btn btn-primary btn-sm">
+                🤝 Direct Order
+              </a>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        console.error('Error loading buyer dashboard:', err);
+      }
+    });
+  </script>
+</body>
+</html>

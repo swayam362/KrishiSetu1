@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Intelligence & Demand Prediction AI — KrushiSetu</title>
+  <meta name="description" content="AI-powered agricultural demand prediction, APMC price forecasting, weather-linked crop analytics, and harvest timing advisory." />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/ai-tools.css" />
+  <!-- Include lightweight Chart.js for high-fidelity interactive agricultural time-series -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">📈</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Market Intelligence</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+        <li><a href="smart-selling.html" class="nav-link">Smart Selling USP</a></li>
+        <li><a href="crop-doctor.html" class="nav-link">Crop Doctor</a></li>
+        <li><a href="market-ai.html" class="nav-link active">Market Intelligence</a></li>
+        <li><a href="orders.html" class="nav-link">Orders</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="farmer-dashboard.html" class="btn btn-outline">Farmer Dashboard</a>
+        <button class="menu-toggle" aria-label="Toggle Navigation">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 2.5rem 1.5rem 5rem;">
+    
+    <!-- Hero Banner -->
+    <div class="market-ai-hero">
+      <div style="max-width: 800px;">
+        <span class="badge" style="background: rgba(255,255,255,0.15); color: #fff; margin-bottom: 0.75rem; backdrop-filter: blur(4px);">
+          Machine Learning Demand & Price Intelligence
+        </span>
+        <h1>Agricultural Demand & Trend Prediction</h1>
+        <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.6; margin-top: 0.5rem;">
+          Predict upcoming demand surges, harvest supply constraints, and modal mandi price movements using our gradient-boosted tabular ML pipeline trained on APMC mandi arrivals, IMD climate data, and seasonal festival calendars.
+        </p>
+      </div>
+    </div>
+
+    <!-- Parameter Selection Toolbar -->
+    <div class="card card-body" style="margin-bottom: 2rem; padding: 1.5rem 2rem; background: var(--white); box-shadow: var(--shadow-sm);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; align-items: flex-end;">
+        <div>
+          <label class="form-label" style="font-weight: 700; margin-bottom: 0.35rem;" for="market-crop-select">
+            🌾 Commodity / Crop:
+          </label>
+          <select class="form-select" id="market-crop-select">
+            <option value="Tomato" selected>🍅 Tomato (Hybrid / Desi)</option>
+            <option value="Onion">🧅 Red Onion (Nashik / Lasalgaon)</option>
+            <option value="Potato">🥔 Potato (Jyoti / Kufri)</option>
+            <option value="Wheat">🌾 Wheat (Sharbati / Lokwan)</option>
+            <option value="Soybean">🌱 Yellow Soybean</option>
+            <option value="Cotton">☁️ Medium Staple Cotton</option>
+            <option value="Rice">🍚 Rice / Basmati Paddy</option>
+            <option value="Maize">🌽 Yellow Maize / Corn</option>
+            <option value="Chilli">🌶️ Red Dry Chilli (Guntur)</option>
+            <option value="Mustard">🌼 Yellow / Black Mustard</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" style="font-weight: 700; margin-bottom: 0.35rem;" for="market-location-select">
+            📍 Trading Region / Mandi Hub:
+          </label>
+          <select class="form-select" id="market-location-select">
+            <option value="Pune" selected>Pune (Maharashtra)</option>
+            <option value="Nashik">Nashik (Maharashtra)</option>
+            <option value="Lasalgaon">Lasalgaon (Maharashtra)</option>
+            <option value="Nagpur">Nagpur (Maharashtra)</option>
+            <option value="Indore">Indore (Madhya Pradesh)</option>
+            <option value="Bhopal">Bhopal (Madhya Pradesh)</option>
+            <option value="Guntur">Guntur (Andhra Pradesh)</option>
+            <option value="Surat">Surat (Gujarat)</option>
+            <option value="Ahmedabad">Ahmedabad (Gujarat)</option>
+            <option value="Karnal">Karnal (Haryana)</option>
+            <option value="Ludhiana">Ludhiana (Punjab)</option>
+            <option value="Lucknow">Lucknow (Uttar Pradesh)</option>
+            <option value="Bangalore">Bangalore (Karnataka)</option>
+            <option value="Jaipur">Jaipur (Rajasthan)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label" style="font-weight: 700; margin-bottom: 0.35rem;" for="market-horizon-select">
+            ⏳ Forecast Horizon:
+          </label>
+          <select class="form-select" id="market-horizon-select">
+            <option value="Next 7 days" selected>Next 7 Days (Short Horizon)</option>
+            <option value="Next 15 days">Next 15 Days (Medium Horizon)</option>
+            <option value="Next 30 days">Next 30 Days (Harvest Cycle)</option>
+          </select>
+        </div>
+
+        <div>
+          <button id="btn-run-forecast" class="btn btn-primary" style="width: 100%; height: 46px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <span>⚡ Generate Prediction</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Forecast Display Container -->
+    <div id="forecast-loading" style="display: none; text-align: center; padding: 4rem 0;">
+      <div class="spinner" style="margin: 0 auto 1rem; width: 48px; height: 48px; border: 4px solid var(--primary-100); border-top-color: var(--primary-600); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+      <p style="color: var(--slate-600); font-weight: 600;">Executing XGBoost Gradient-Boosted Inference & Agro-Climatic Synthesis...</p>
+    </div>
+
+    <div id="forecast-content">
+      
+      <!-- Top KPIs Grid -->
+      <div class="market-kpi-grid">
+        <div class="market-kpi-card">
+          <div class="market-kpi-title">Current Demand Level</div>
+          <div class="market-kpi-val" id="kpi-demand-level">
+            <span class="demand-pill high">High</span>
+          </div>
+          <div class="market-kpi-sub" id="kpi-demand-trend" style="color: var(--primary-700);">
+            Demand likely increasing
+          </div>
+        </div>
+
+        <div class="market-kpi-card">
+          <div class="market-kpi-title">Current Spot Mandi Price</div>
+          <div class="market-kpi-val">
+            ₹<span id="kpi-current-price">28.50</span> <span style="font-size: 0.9rem; color: var(--slate-500); font-weight: 500;">/ kg</span>
+          </div>
+          <div class="market-kpi-sub" style="color: var(--slate-500);" id="kpi-location-sub">
+            Pune APMC Benchmark
+          </div>
+        </div>
+
+        <div class="market-kpi-card">
+          <div class="market-kpi-title">Projected Horizon Price</div>
+          <div class="market-kpi-val">
+            ₹<span id="kpi-projected-price">31.20</span> <span style="font-size: 0.9rem; color: var(--slate-500); font-weight: 500;">/ kg</span>
+          </div>
+          <div class="market-kpi-sub" id="kpi-price-change" style="color: var(--primary-700); font-weight: 700;">
+            ▲ +9.5% Projected Rise
+          </div>
+        </div>
+
+        <div class="market-kpi-card">
+          <div class="market-kpi-title">Model Confidence & Uncertainty</div>
+          <div class="market-kpi-val">
+            <span id="kpi-confidence">91.5%</span>
+          </div>
+          <div class="market-kpi-sub" id="kpi-uncertainty" style="color: var(--slate-600);">
+            ± ₹2.20 / kg (7.8% bound)
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Advisory & Warning Banner -->
+      <div class="card card-body" style="padding: 1.75rem 2rem; margin-bottom: 2rem; border-left: 6px solid var(--primary-600); background: var(--white);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+          <h3 style="color: var(--primary-900); font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <span>💡</span> <span>Farmer Harvest & Selling Advisory</span>
+          </h3>
+          <span class="badge badge-success" id="advisory-horizon-badge">Next 7 Days Forecast</span>
+        </div>
+        <p id="advisory-text" style="color: var(--slate-700); font-size: 1.05rem; line-height: 1.6; margin-bottom: 0;">
+          Hold 40% of your lot for 10-15 days. Expected demand spike in urban processing markets could yield up to +9.5% price premium over current spot rate.
+        </p>
+
+        <!-- Mandatory Disclaimer -->
+        <div class="disclaimer-banner">
+          <span style="font-size: 1.4rem;">⚠️</span>
+          <div>
+            <strong>Forecast — not a guarantee.</strong>
+            <span style="display: block; font-size: 0.82rem; font-weight: 400; color: #78350f; margin-top: 0.15rem;">
+              Agricultural market conditions depend on dynamic weather events, transport logistics, and sudden government policy changes.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Historical & Forecast Chart -->
+      <div class="card card-body" style="padding: 2rem; margin-bottom: 2rem; background: var(--white);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <h3 style="font-size: 1.3rem; color: var(--slate-900); margin-bottom: 0.25rem;">
+              📊 Historical Price Trend & 15-Day ML Projected Envelope
+            </h3>
+            <p style="color: var(--slate-500); font-size: 0.9rem; margin: 0;">
+              Combines 30-day past APMC mandi modal price with ML predicted trajectory and ± uncertainty boundaries.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span style="display: inline-block; width: 14px; height: 14px; background: #0284c7; border-radius: 3px;"></span>
+            <span style="font-size: 0.8rem; color: var(--slate-600); margin-right: 0.75rem;">Actual Price</span>
+            <span style="display: inline-block; width: 14px; height: 14px; background: #16a34a; border-radius: 3px;"></span>
+            <span style="font-size: 0.8rem; color: var(--slate-600); margin-right: 0.75rem;">Projected Forecast</span>
+            <span style="display: inline-block; width: 14px; height: 14px; background: rgba(34, 197, 94, 0.2); border: 1px solid #16a34a; border-radius: 3px;"></span>
+            <span style="font-size: 0.8rem; color: var(--slate-600);">Uncertainty Envelope</span>
+          </div>
+        </div>
+
+        <div class="chart-wrapper">
+          <canvas id="market-forecast-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Factors Influencing Forecast & Meteorological Dynamics -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <!-- Factors Influencing Forecast -->
+        <div class="card card-body" style="padding: 1.75rem; background: var(--white);">
+          <h3 style="font-size: 1.15rem; color: var(--slate-900); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🔍</span> Key Drivers Influencing Prediction
+          </h3>
+          <p style="color: var(--slate-500); font-size: 0.85rem; margin-bottom: 1rem;">
+            Feature attribution derived from XGBoost gradient importance and agro-climatic signals:
+          </p>
+
+          <div class="factors-container" id="factors-list">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- Weather & Mandi Supply Context -->
+        <div class="card card-body" style="padding: 1.75rem; background: var(--white);">
+          <h3 style="font-size: 1.15rem; color: var(--slate-900); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🌦️</span> Regional Climatological & Supply Context
+          </h3>
+          <p style="color: var(--slate-500); font-size: 0.85rem; margin-bottom: 1rem;">
+            Live agro-meteorological observations and mandi arrival volume:
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+              <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500);">Temperature & Climate</span>
+              <div style="font-size: 1.35rem; font-weight: 800; color: var(--slate-800); margin: 0.2rem 0;" id="weather-temp">28.5°C</div>
+              <span style="font-size: 0.8rem; color: var(--slate-600);" id="weather-condition">Partly Cloudy</span>
+            </div>
+
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+              <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500);">Rainfall & Moisture</span>
+              <div style="font-size: 1.35rem; font-weight: 800; color: var(--slate-800); margin: 0.2rem 0;" id="weather-rain">12.0 mm</div>
+              <span style="font-size: 0.8rem; color: var(--slate-600);" id="weather-humidity">Humidity: 65%</span>
+            </div>
+
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+              <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500);">Daily APMC Arrivals</span>
+              <div style="font-size: 1.35rem; font-weight: 800; color: var(--slate-800); margin: 0.2rem 0;" id="mandi-arrivals">8,500 Qtl</div>
+              <span style="font-size: 0.8rem; color: var(--slate-600);">Spot volume</span>
+            </div>
+
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+              <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500);">Crop Season Status</span>
+              <div style="font-size: 1.15rem; font-weight: 800; color: var(--slate-800); margin: 0.2rem 0;" id="crop-season">Kharif (Monsoon)</div>
+              <span style="font-size: 0.8rem; color: var(--slate-600);">Active harvesting phase</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live APMC Benchmark Comparison Table -->
+      <div class="card" style="padding: 2rem; background: var(--white); margin-bottom: 2rem;">
+        <h3 style="font-size: 1.25rem; color: var(--slate-900); margin-bottom: 1.25rem;">
+          📍 Live Spot Mandi Benchmark Comparison (Today)
+        </h3>
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mandi / APMC Yard</th>
+                <th>State</th>
+                <th>Modal Price (Quintal)</th>
+                <th>Rate / kg</th>
+                <th>Arrival Volume</th>
+                <th>Daily Trend</th>
+              </tr>
+            </thead>
+            <tbody id="mandi-comparison-rows">
+              <!-- Dynamically populated or standard benchmark -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Model Transparency, Data Pipeline & Privacy Governance Card -->
+      <div class="methodology-box">
+        <h3 style="font-size: 1.25rem; color: var(--slate-900); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>⚙️</span> Prediction Pipeline & ML Model Transparency
+        </h3>
+        <p style="color: var(--slate-600); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem;">
+          KrushiSetu believes in open and verifiable agricultural AI. Our demand forecasts are computed using an <strong>XGBoost Regressor (Gradient Boosted Trees)</strong> trained on 24 agro-economic, meteorological, and cyclical indicators:
+        </p>
+
+        <div style="margin-bottom: 1.25rem;">
+          <span class="methodology-tag">Raw APMC Arrivals</span>
+          <span class="methodology-tag">IMD Climatological Observations</span>
+          <span class="methodology-tag">Price Moving Averages (7d, 14d, 30d)</span>
+          <span class="methodology-tag">Cyclical Festival Multipliers</span>
+          <span class="methodology-tag">Weather Stress Index</span>
+          <span class="methodology-tag">Supply-Arrival Imbalance</span>
+          <span class="methodology-tag">Anonymized Search & Order Signals</span>
+        </div>
+
+        <div style="background: var(--white); border: 1px solid var(--slate-200); border-radius: var(--radius-lg); padding: 1.25rem; font-size: 0.88rem; color: var(--slate-700);">
+          <strong style="color: var(--slate-900);">🔒 Data Privacy & Production Separation Guarantee:</strong>
+          <ul style="margin: 0.5rem 0 0 1.25rem; line-height: 1.5;">
+            <li>Production databases (farmer accounts, personal orders, private chats) are completely isolated from ML training.</li>
+            <li>No personal identifying information (PII) is ever ingested into the training pipeline.</li>
+            <li>Only high-level anonymized volume metrics and verified public APMC / IMD feeds are used for model optimization.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 KrushiSetu Market AI & APMC Analytics</div>
+        <div>Aggregated from official Agmarknet and Direct Mandi feeds</div>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/market-ai.js"></script>
+</body>
+</html>

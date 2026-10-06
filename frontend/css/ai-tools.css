@@ -1,0 +1,418 @@
+/* ==========================================================================
+   KRUSHISETU AI TOOLS & SMART SELLING STYLES
+   ========================================================================== */
+
+/* Crop Doctor Scanner */
+.scanner-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.upload-zone {
+  border: 2px dashed var(--primary-400);
+  background: var(--primary-50);
+  border-radius: var(--radius-xl);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+}
+
+.upload-zone:hover {
+  border-color: var(--primary-600);
+  background: #e8f9ee;
+}
+
+.scan-icon-bubble {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--primary-100);
+  color: var(--primary-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+.preview-holder {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  background-size: cover;
+  background-position: center;
+}
+
+.laser-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary-400);
+  box-shadow: 0 0 15px var(--primary-500);
+  display: none;
+  animation: scanLaser 2s infinite ease-in-out;
+}
+
+@keyframes scanLaser {
+  0% { top: 0%; opacity: 0.8; }
+  50% { top: 100%; opacity: 1; }
+  100% { top: 0%; opacity: 0.8; }
+}
+
+/* Diagnosis Result Card */
+.diagnosis-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-md);
+}
+
+.severity-pill {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.severity-moderate {
+  background: var(--accent-amber-light);
+  color: #b45309;
+}
+
+.remedy-box {
+  background: var(--slate-50);
+  border-left: 4px solid var(--primary-600);
+  padding: 1rem 1.25rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   SMART SELLING DECISION SUPPORT ENGINE
+   ========================================================================== */
+.smart-selling-hero {
+  background: linear-gradient(135deg, var(--slate-900), var(--primary-900));
+  color: var(--white);
+  padding: 3rem 0;
+  border-radius: var(--radius-xl);
+  margin-bottom: 2.5rem;
+}
+
+.smart-selling-hero h1 {
+  color: var(--white);
+  font-size: 2.25rem;
+}
+
+.formula-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.75rem;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+}
+
+.formula-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formula-val {
+  font-weight: 800;
+  color: var(--primary-400);
+}
+
+.formula-sign {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--slate-400);
+}
+
+/* Comparison Grid */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.buyer-offer-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--slate-200);
+  padding: 1.5rem;
+  position: relative;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.buyer-offer-card.recommended {
+  border-color: var(--primary-500);
+  background: #fcfdfc;
+  box-shadow: 0 10px 25px -5px rgba(34, 197, 94, 0.18);
+}
+
+.recommended-ribbon {
+  position: absolute;
+  top: -12px;
+  right: 1.5rem;
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(22, 122, 72, 0.3);
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--slate-100);
+  font-size: 0.92rem;
+}
+
+.breakdown-row.net-realization {
+  border-top: 2px solid var(--slate-300);
+  border-bottom: none;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--primary-800);
+}
+
+@media (max-width: 768px) {
+  .scanner-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   MARKET AI & DEMAND PREDICTION DASHBOARD
+   ========================================================================== */
+.market-ai-hero {
+  background: linear-gradient(135deg, #064e3b, #0f172a);
+  color: var(--white);
+  padding: 2.75rem 2rem;
+  border-radius: var(--radius-xl);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(6, 78, 59, 0.25);
+}
+
+.market-ai-hero h1 {
+  color: var(--white);
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.market-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.market-kpi-card {
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+}
+
+.market-kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.market-kpi-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--slate-500);
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.market-kpi-val {
+  font-size: 1.85rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  color: var(--slate-900);
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.market-kpi-sub {
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
+  font-weight: 600;
+}
+
+/* Demand Level Badges */
+.demand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.demand-pill.very-high {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.demand-pill.high {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.demand-pill.moderate {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.demand-pill.low {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+/* Factors Grid */
+.factors-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.factor-item {
+  background: var(--slate-50);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--primary-500);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.factor-item.warning {
+  border-left-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.factor-item.positive {
+  border-left-color: #10b981;
+  background: #ecfdf5;
+}
+
+.factor-category {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--slate-500);
+}
+
+.factor-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.factor-impact {
+  font-size: 0.82rem;
+  color: var(--slate-600);
+  font-weight: 600;
+}
+
+/* Forecast Disclaimer Banner */
+.disclaimer-banner {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.5rem;
+  color: #92400e;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* Methodology Card */
+.methodology-box {
+  background: #f8fafc;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  margin-top: 2rem;
+}
+
+.methodology-tag {
+  display: inline-block;
+  background: var(--slate-200);
+  color: var(--slate-700);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Chart Canvas Wrapper */
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
