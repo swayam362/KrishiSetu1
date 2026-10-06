@@ -46,9 +46,10 @@ def diagnose_crop_leaf(current_user):
     file_storage.save(saved_path)
     relative_img_url = f"/uploads/disease_scans/{scan_filename}"
 
-    # Execute ML Inference
+    # Execute ML Inference with Multilingual & Voice Support
+    lang = sanitize_string(request.form.get('lang', '') or request.args.get('lang', 'en'))
     predictor = get_disease_predictor()
-    diagnosis_output = predictor.predict(crop_name=crop_type, image_path=saved_path)
+    diagnosis_output = predictor.predict(crop_name=crop_type, image_path=saved_path, lang=lang)
 
     scan_id = f"SCAN-{uuid.uuid4().hex[:8].upper()}"
     now_iso = datetime.datetime.utcnow().isoformat()

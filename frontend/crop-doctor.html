@@ -36,13 +36,24 @@
     </div>
   </header>
 
-  <main class="container" style="padding: 3rem 1.5rem 5rem;">
+  <main class="container" style="padding: 2.5rem 1.5rem 5rem;">
     
-    <div style="text-align: center; max-width: 700px; margin: 0 auto 2.5rem;">
-      <span class="badge badge-success" style="margin-bottom: 0.5rem;">AI Plant Pathology & Soil Advisor</span>
-      <h1 style="font-size: 2.25rem; color: var(--slate-900);">KrushiSetu Crop Doctor</h1>
-      <p style="color: var(--slate-600); margin-top: 0.5rem;">
-        Upload or capture a photo of infected crop leaves for instant disease diagnosis, organic remedies, and soil fertilizer advisory.
+    <!-- Multilingual Language Selector Bar -->
+    <div class="lang-selector-bar" id="lang-selector-bar">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--slate-600); margin-right: 0.35rem;">🌐 Language:</span>
+      <button type="button" class="lang-pill active" data-lang="en" onclick="changeLanguage('en')">🇬🇧 English</button>
+      <button type="button" class="lang-pill" data-lang="hi" onclick="changeLanguage('hi')">🇮🇳 हिन्दी</button>
+      <button type="button" class="lang-pill" data-lang="mr" onclick="changeLanguage('mr')">🚩 मराठी</button>
+      <button type="button" class="lang-pill" data-lang="te" onclick="changeLanguage('te')">🌾 తెలుగు</button>
+      <button type="button" class="lang-pill" data-lang="kn" onclick="changeLanguage('kn')">🌱 ಕನ್ನಡ</button>
+    </div>
+
+    <!-- Header Section -->
+    <div style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+      <span class="badge badge-success" data-i18n="crop_doctor_tag" style="margin-bottom: 0.5rem;">AI Plant Pathology & Soil Advisor</span>
+      <h1 style="font-size: 2.25rem; color: var(--slate-900);" data-i18n="crop_doctor_title">KrushiSetu Crop Doctor</h1>
+      <p style="color: var(--slate-600); margin-top: 0.5rem; line-height: 1.6;" data-i18n="crop_doctor_sub">
+        Upload or capture a photo of infected crop leaves for instant disease diagnosis, organic remedies, voice advisory, and soil fertilizer scheduling.
       </p>
     </div>
 
@@ -50,55 +61,47 @@
     <div class="scanner-container">
       
       <!-- Upload Zone -->
-      <div class="upload-zone" onclick="document.getElementById('crop-file-input').click()">
-        <input type="file" id="crop-file-input" accept="image/*" style="display: none;" />
-        
-        <div class="preview-holder" id="preview-holder"></div>
-        <div class="laser-line" id="laser-line"></div>
+      <div>
+        <div class="upload-zone" onclick="document.getElementById('crop-file-input').click()">
+          <input type="file" id="crop-file-input" accept="image/*" style="display: none;" />
+          
+          <div class="preview-holder" id="preview-holder"></div>
+          <div class="laser-line" id="laser-line"></div>
 
-        <div id="upload-prompt-text" style="z-index: 5;">
-          <div class="scan-icon-bubble">📸</div>
-          <h3 style="font-size: 1.2rem; color: var(--primary-900); margin-bottom: 0.25rem;">Upload Crop Leaf Photo</h3>
-          <p style="color: var(--slate-500); font-size: 0.88rem;">Click to upload or drag & drop (JPG, PNG)</p>
-          <button type="button" class="btn btn-outline-primary btn-sm" style="margin-top: 1rem;">
-            Select Image
+          <div id="upload-prompt-text" style="z-index: 5;">
+            <div class="scan-icon-bubble">📸</div>
+            <h3 style="font-size: 1.2rem; color: var(--primary-900); margin-bottom: 0.25rem;" data-i18n="upload_box_title">Upload Crop Leaf Photo</h3>
+            <p style="color: var(--slate-500); font-size: 0.88rem;" data-i18n="upload_box_sub">Click to upload or drag & drop (JPG, PNG)</p>
+            <button type="button" class="btn btn-outline-primary btn-sm" style="margin-top: 1rem;" data-i18n="select_image_btn">
+              📸 Select Image
+            </button>
+          </div>
+        </div>
+
+        <!-- Voice & Crop Selection Strip -->
+        <div style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <label for="select-scan-crop" style="font-size: 0.85rem; font-weight: 600; color: var(--slate-700);">Crop:</label>
+            <select id="select-scan-crop" class="form-select" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; width: auto;" onchange="onScanCropChange()">
+              <option value="Tomato">Tomato (टमाटर / टोमॅटो)</option>
+              <option value="Wheat">Wheat (गेहूं / गहू)</option>
+              <option value="Onion">Onion (प्याज / कांदा)</option>
+              <option value="Rice">Rice / Paddy (धान / भात)</option>
+              <option value="Cotton">Cotton (कपास / कापूस)</option>
+              <option value="Soybean">Soybean (सोयाबीन)</option>
+            </select>
+          </div>
+
+          <button type="button" id="btn-mic-listen" class="btn-mic" onclick="toggleVoiceInput()">
+            <span>🎙️</span>
+            <span id="mic-status-text" data-i18n="speak_crop_btn">🎙️ Speak Crop / Symptoms</span>
           </button>
         </div>
       </div>
 
-      <!-- Diagnosis Report Container -->
+      <!-- Diagnosis Report Container with Voice Reader -->
       <div class="diagnosis-card" id="diagnosis-card" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-          <div>
-            <span class="badge badge-success" style="margin-bottom: 0.25rem;">Diagnosis Result</span>
-            <h2 style="font-size: 1.5rem; color: var(--slate-900);">Early Blight (Alternaria solani)</h2>
-            <div style="font-size: 0.85rem; color: var(--slate-500);">Confidence: <strong>94% Match</strong></div>
-          </div>
-          <span class="severity-pill severity-moderate">Moderate Severity</span>
-        </div>
-
-        <div style="margin-bottom: 1rem;">
-          <h4 style="font-size: 0.95rem; color: var(--slate-800); margin-bottom: 0.35rem;">Detected Symptoms:</h4>
-          <ul style="padding-left: 1.25rem; font-size: 0.9rem; color: var(--slate-600);">
-            <li>Concentric dark brown rings on lower leaves</li>
-            <li>Yellow halo surrounding necrotic leaf spots</li>
-            <li>Early leaf drop and foliar drying</li>
-          </ul>
-        </div>
-
-        <div class="remedy-box">
-          <h4 style="color: var(--primary-800); margin-bottom: 0.35rem;">🌿 Recommended Organic Treatment:</h4>
-          <p style="font-size: 0.9rem; color: var(--slate-700);">
-            Spray <strong>Copper Oxychloride @ 2.5g/L water</strong>. Prune infected bottom foliage and destroy them away from field. Avoid overhead sprinkler irrigation.
-          </p>
-        </div>
-
-        <div class="remedy-box" style="border-left-color: var(--accent-amber); margin-top: 0.75rem;">
-          <h4 style="color: #92400e; margin-bottom: 0.35rem;">🧪 Chemical Treatment (If severe):</h4>
-          <p style="font-size: 0.9rem; color: var(--slate-700);">
-            Apply <strong>Mancozeb 75% WP @ 2g/L</strong> or <strong>Azoxystrobin 23% SC @ 1ml/L</strong> at 10-day intervals.
-          </p>
-        </div>
+        <!-- Populated dynamically by JS with multilingual voice content -->
       </div>
 
     </div>
@@ -106,9 +109,9 @@
     <!-- Soil Nutrient & Fertilizer Advisor Section -->
     <div class="card" id="soil" style="margin-top: 4rem; padding: 2.5rem; background: var(--white); border-radius: var(--radius-xl);">
       <div style="margin-bottom: 1.75rem;">
-        <span class="badge badge-earth" style="margin-bottom: 0.5rem;">Soil Health Intelligence</span>
-        <h2 style="font-size: 1.75rem; color: var(--slate-900);">Soil Nutrient & Fertilizer Dosage Calculator</h2>
-        <p style="color: var(--slate-600); font-size: 0.95rem;">
+        <span class="badge badge-earth" data-i18n="soil_tag" style="margin-bottom: 0.5rem;">Soil Health Intelligence</span>
+        <h2 style="font-size: 1.75rem; color: var(--slate-900);" data-i18n="soil_title">Soil Nutrient & Fertilizer Dosage Calculator</h2>
+        <p style="color: var(--slate-600); font-size: 0.95rem;" data-i18n="soil_sub">
           Enter your soil test values (N-P-K & pH) to receive crop-specific fertilizer plans and reduce excessive chemical costs.
         </p>
       </div>
@@ -116,38 +119,39 @@
       <form onsubmit="calculateSoilHealth(event)">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem;">
           <div class="form-group">
-            <label class="form-label">Target Crop</label>
+            <label class="form-label" data-i18n="target_crop_label">Target Crop</label>
             <select class="form-select" id="soil-crop">
-              <option value="Wheat">Wheat</option>
-              <option value="Onion">Onion</option>
-              <option value="Soybean">Soybean</option>
-              <option value="Tomato">Tomato</option>
-              <option value="Paddy/Rice">Paddy / Rice</option>
+              <option value="Wheat">Wheat (गेहूं / गहू)</option>
+              <option value="Onion">Onion (प्याज / कांदा)</option>
+              <option value="Soybean">Soybean (सोयाबीन)</option>
+              <option value="Tomato">Tomato (टमाटर / टोमॅटो)</option>
+              <option value="Rice">Paddy / Rice (धान / भात)</option>
+              <option value="Cotton">Cotton (कपास / कापूस)</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Nitrogen (N) kg/ha</label>
-            <input type="number" id="soil-n" class="form-control" value="38" required />
+            <label class="form-label" data-i18n="nitrogen_label">Nitrogen (N) kg/ha</label>
+            <input type="number" id="soil-n" class="form-control" value="85" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Phosphorus (P) kg/ha</label>
-            <input type="number" id="soil-p" class="form-control" value="22" required />
+            <label class="form-label" data-i18n="phosphorus_label">Phosphorus (P) kg/ha</label>
+            <input type="number" id="soil-p" class="form-control" value="18" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Potassium (K) kg/ha</label>
-            <input type="number" id="soil-k" class="form-control" value="45" required />
+            <label class="form-label" data-i18n="potassium_label">Potassium (K) kg/ha</label>
+            <input type="number" id="soil-k" class="form-control" value="28" required />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Soil pH Level</label>
+            <label class="form-label" data-i18n="ph_label">Soil pH Level</label>
             <input type="number" step="0.1" id="soil-ph" class="form-control" value="6.8" required />
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+        <button type="submit" class="btn btn-primary" style="margin-top: 0.75rem;" data-i18n="calc_soil_btn">
           🌱 Calculate Soil Fertilizer Plan
         </button>
       </form>
@@ -155,7 +159,7 @@
       <!-- Soil Results Display -->
       <div id="soil-result-card" style="margin-top: 2rem; display: none;">
         <div id="soil-recommendation-details">
-          <!-- Populated by JS -->
+          <!-- Populated by JS with Voice support -->
         </div>
       </div>
     </div>
@@ -167,13 +171,14 @@
     <div class="container">
       <div class="footer-bottom">
         <div>© 2026 KrushiSetu Crop Doctor & Agronomy AI</div>
-        <div>Trained on 100,000+ plant disease pathology samples</div>
+        <div>Multilingual Pathology Engine • Trained on 100,000+ plant disease samples</div>
       </div>
     </div>
   </footer>
 
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/i18n-agri.js"></script>
   <script src="js/crop-doctor.js"></script>
 </body>
 </html>

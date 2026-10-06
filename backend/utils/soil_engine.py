@@ -143,12 +143,22 @@ def analyze_soil(
     }
 
     current_stage_tip = stage_advisories.get(stage, f"Monitor {crop_name} moisture and apply split fertilizer doses as per schedule.")
+    score = min(95, max(45, int(100 - abs(ph - 6.8)*8 - (30 if n_status.startswith('Deficient') else 0) - (20 if p_status.startswith('Deficient') else 0) - (20 if k_status.startswith('Deficient') else 0))))
+
+    # Multilingual Voice & Advice scripts
+    speech_scripts = {
+        "en": f"Soil health score for {crop_name} is {score} out of 100. Status: {n_status} Nitrogen, {p_status} Phosphorus, {k_status} Potassium, and pH is {ph}. Follow balanced fertilizer schedule.",
+        "hi": f"किसान भाई, {crop_name} के लिए आपके खेत का मृदा स्वास्थ्य स्कोर 100 में से {score} है। नाइट्रोजन {n_status} और पीएच {ph} है। यूरिया और सुपर फॉस्फेट का संतुलित प्रयोग करें।",
+        "mr": f"शेतकरी बंधूंनो, {crop_name} पिकासाठी तुमच्या जमिनीचा आरोग्य स्कोर १०० पैकी {score} आहे. नत्र {n_status} आणि सामू {ph} आहे. संतुलित खत मात्रा द्या.",
+        "te": f"రైతు సోదరులారా, {crop_name} కోసం మీ నేల ఆరోగ్య స్కోరు {score}. సమతుల్య ఎరువుల ప్రణాళికను పాటించండి.",
+        "kn": f"ರೈತ ಮಿತ್ರರೇ, {crop_name} ಬೆಳೆಗೆ ನಿಮ್ಮ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಸ್ಕೋರ್ {score}. ಸಮತೋಲಿತ ರಸಗೊಬ್ಬರ ವೇಳಾಪಟ್ಟಿಯನ್ನು ಅನುಸರಿಸಿ."
+    }
 
     return {
         "crop": crop_name,
         "growth_stage": stage,
         "location": location,
-        "soil_health_score": min(95, max(45, int(100 - abs(ph - 6.8)*8 - (30 if n_status.startswith('Deficient') else 0) - (20 if p_status.startswith('Deficient') else 0) - (20 if k_status.startswith('Deficient') else 0)))),
+        "soil_health_score": score,
         "status_summary": f"{ph_status} Soil | N: {n_status} | P: {p_status} | K: {k_status}",
         "parameters": {
             "nitrogen": {"value": nitrogen, "unit": "kg/ha", "status": n_status, "description": n_desc},
@@ -159,5 +169,7 @@ def analyze_soil(
         },
         "fertilizer_options": options,
         "stage_advisory": current_stage_tip,
+        "speech_scripts": speech_scripts,
         "disclaimer": "AI Soil & Nutrient recommendations are decision-support guidelines based on standard agricultural fertilizer equations. Soil conditions vary with micro-climates; adjust quantities based on local soil test lab reports."
     }
+

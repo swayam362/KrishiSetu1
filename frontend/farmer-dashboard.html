@@ -144,9 +144,11 @@
       </a>
 
       <div class="nav-actions">
+        <button class="btn btn-outline-primary btn-sm" onclick="playDashboardBriefing()" title="Listen to Voice Briefing">🔊 Voice Briefing</button>
+        <a href="crop-doctor.html" class="btn btn-outline btn-sm">🔬 Crop Doctor</a>
         <a href="smart-selling.html" class="btn btn-outline-primary btn-sm">⚡ Smart Selling USP</a>
-        <a href="marketplace.html" class="btn btn-outline btn-sm">🛒 Public Trading Floor</a>
-        <button class="btn btn-outline-primary btn-sm" onclick="API.logout()">Log Out</button>
+        <a href="marketplace.html" class="btn btn-outline btn-sm">🛒 Marketplace</a>
+        <button class="btn btn-outline btn-sm" onclick="API.logout()">Log Out</button>
       </div>
     </div>
   </header>
@@ -624,6 +626,7 @@
   <!-- Scripts -->
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/i18n-agri.js"></script>
   <script src="js/products.js"></script>
   <script>
     let myCropsCache = [];
@@ -633,6 +636,24 @@
       grade: 'Grade A',
       price: 30.0
     };
+
+    function playDashboardBriefing() {
+      const lang = (typeof AGRI_I18N !== 'undefined') ? AGRI_I18N.currentLang : 'en';
+      const scripts = {
+        en: "Welcome to KrushiSetu Farmer Portal. Today's advisory: Tomato prices trending upwards by 8 percent in regional mandis. Check Crop Doctor to monitor early blight precautions.",
+        hi: "कृषिसेतु किसान पोर्टल में आपका स्वागत है। आज का मुख्य समाचार: टमाटर के दामों में क्षेत्रीय मंडियों में 8 प्रतिशत की तेजी है। फसल में झुलसा रोग से बचाव के लिए क्रॉप डॉक्टर देखें।",
+        mr: "कृषीसेतू शेतकरी पोर्टलवर आपले स्वागत आहे. आजचा सल्ला: टोमॅटोचे बाजारभाव वाढीच्या दिशेने आहेत. करपा रोग प्रतिबंधासाठी पीक डॉक्टर तपासा.",
+        te: "కృషిసేతు రైతు పోర్టల్‌కు స్వాగతం. మార్కెట్‌లో టమాట ధరలు పెరుగుతున్నాయి. పంట రక్షణ కోసం క్రాప్ డాక్టర్‌ను ఉపయోగించండి.",
+        kn: "ಕೃಷಿಸೇತು ರೈತ ಪೋರ್ಟಲ್‌ಗೆ ಸ್ವಾಗತ. ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಬೆಲೆಗಳು ಉತ್ತಮವಾಗಿವೆ. ಬೆಳೆ ರಕ್ಷಣೆಗೆ ಕ್ರಾಪ್ ಡಾಕ್ಟರ್ ಬಳಸಿ."
+      };
+      const text = scripts[lang] || scripts['en'];
+      if (typeof AGRI_VOICE !== 'undefined') {
+        AGRI_VOICE.speak(text, lang);
+        if (typeof showToast === 'function') {
+          showToast('Playing audio briefing...', 'info');
+        }
+      }
+    }
 
     function scrollToMyCrops() {
       const section = document.getElementById('my-crops-section');
