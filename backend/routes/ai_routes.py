@@ -4,7 +4,7 @@ import datetime
 import re
 from flask import Blueprint, jsonify, request
 from backend.database import get_db, make_id_query
-from backend.utils.security import sanitize_string
+from backend.utils.security import sanitize_string, decode_token, sanitize_user
 from backend.utils.middleware import token_required, roles_required
 from backend.utils.upload_utils import is_allowed_image
 from backend.utils.soil_engine import analyze_soil
@@ -21,12 +21,35 @@ ai_bp = Blueprint('ai', __name__, url_prefix='/api/ai')
 # =========================================================================
 
 @ai_bp.route('/crop-doctor/diagnose', methods=['POST'])
-@roles_required("farmer")
-def diagnose_crop_leaf(current_user):
+def diagnose_crop_leaf():
     """
     Diagnose plant pathology from leaf photo.
-    Validates image security, runs ML inference, records private history in MongoDB.
+    Validates image security, runs ML inference, records private history in MongoDB for authenticated farmers.
     """
+    # Resolve optional or authenticated user
+    current_user = None
+    auth_header = request.headers.get("Authorization")
+    if auth_header and "bearer " in auth_header.lower():
+        parts = auth_header.split()
+        if len(parts) == 2:
+            token = parts[1]
+            payload = decode_token(token)
+            if payload:
+                user_id = payload.get("sub")
+                users_col = get_db().get_collection("users")
+                user = users_col.find_one(make_id_query(user_id)) if user_id else None
+                if not user and payload.get("email"):
+                    user = users_col.find_one({"email": payload.get("email")})
+                if user:
+                    current_user = sanitize_user(user)
+                else:
+                    current_user = {
+                        "id": str(user_id or "user"),
+                        "_id": str(user_id or "user"),
+                        "role": (payload.get("role") or "farmer").lower(),
+                        "full_name": payload.get("email", "Farmer")
+                    }
+
     crop_type = sanitize_string(request.form.get('crop', '') or request.form.get('crop_type', 'Tomato'))
     
     if 'image' not in request.files:
@@ -51,15 +74,29 @@ def diagnose_crop_leaf(current_user):
     predictor = get_disease_predictor()
     diagnosis_output = predictor.predict(crop_name=crop_type, image_path=saved_path, lang=lang)
 
+    # Check if image was rejected by Leaf Authenticity & Foliage Validator
+    if diagnosis_output.get("is_valid_plant") is False or diagnosis_output.get("success") is False:
+        return jsonify({
+            "success": False,
+            "is_valid_plant": False,
+            "error_code": diagnosis_output.get("error_code", "INVALID_LEAF_IMAGE"),
+            "error": diagnosis_output.get("error", "Invalid leaf image uploaded."),
+            "image_url": relative_img_url,
+            "diagnosis": diagnosis_output
+        }), 400
+
     scan_id = f"SCAN-{uuid.uuid4().hex[:8].upper()}"
     now_iso = datetime.datetime.utcnow().isoformat()
 
-    # Save private diagnosis record in disease_results collection
+    # Save private diagnosis record in disease_results collection only for genuine leaves
+    farmer_id = str(current_user["id"]) if current_user else "guest"
+    farmer_name = current_user.get("full_name", "Farmer") if current_user else "Guest Visitor"
+
     record_doc = {
         "_id": scan_id,
         "id": scan_id,
-        "farmer_id": str(current_user["id"]),
-        "farmer_name": current_user.get("full_name", "Farmer"),
+        "farmer_id": farmer_id,
+        "farmer_name": farmer_name,
         "crop": crop_type,
         "image_url": relative_img_url,
         "diagnosis": diagnosis_output,
@@ -71,6 +108,7 @@ def diagnose_crop_leaf(current_user):
 
     return jsonify({
         "success": True,
+        "is_valid_plant": True,
         "scan_id": scan_id,
         "image_url": relative_img_url,
         "diagnosis": diagnosis_output

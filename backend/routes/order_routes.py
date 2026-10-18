@@ -131,21 +131,21 @@ def list_orders(current_user):
     orders_col = get_db().get_collection("orders")
 
     if role == "farmer":
-        user_orders = orders_col.find({"farmer_id": user_id})
+        user_orders = list(orders_col.find({"farmer_id": user_id}))
     elif role == "buyer":
-        user_orders = orders_col.find({"buyer_id": user_id})
+        user_orders = list(orders_col.find({"buyer_id": user_id}))
     else:  # Admin
-        user_orders = orders_col.find()
+        user_orders = list(orders_col.find({}))
 
     # Seed mock orders if completely empty
-    if not user_orders and orders_col.count_documents() == 0:
+    if not user_orders and orders_col.count_documents({}) == 0:
         _seed_default_orders(orders_col, user_id, role)
         if role == "farmer":
-            user_orders = orders_col.find({"farmer_id": user_id})
+            user_orders = list(orders_col.find({"farmer_id": user_id}))
         elif role == "buyer":
-            user_orders = orders_col.find({"buyer_id": user_id})
+            user_orders = list(orders_col.find({"buyer_id": user_id}))
         else:
-            user_orders = orders_col.find()
+            user_orders = list(orders_col.find({}))
 
     results = []
     for o in user_orders:

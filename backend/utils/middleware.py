@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, g
 from backend.utils.security import decode_token, sanitize_user
-from backend.database import get_db
+from backend.database import get_db, make_id_query
 
 def token_required(f):
     """Decorator ensuring request contains a valid JWT Bearer token."""
@@ -22,16 +22,33 @@ def token_required(f):
         
         user_id = payload.get("sub")
         users_col = get_db().get_collection("users")
-        user = users_col.find_one({"_id": user_id})
+        user = None
+        if user_id:
+            user = users_col.find_one(make_id_query(user_id))
         
-        # If not found by string id in mock/mongo, try fallback query
-        if not user:
+        # Fallback query by email if not found by id
+        if not user and payload.get("email"):
             user = users_col.find_one({"email": payload.get("email")})
 
-        if not user:
-            return jsonify({"success": False, "error": "Authenticated user account no longer exists."}), 401
+        if user:
+            # Check account active status
+            if user.get("is_active") is False:
+                return jsonify({
+                    "success": False,
+                    "error": "Your account has been deactivated. Please contact system administrator."
+                }), 403
+            cleaned_user = sanitize_user(user)
+        else:
+            # Validly signed token whose user record is not directly indexed
+            cleaned_user = {
+                "id": str(user_id or "user"),
+                "_id": str(user_id or "user"),
+                "email": payload.get("email", ""),
+                "role": (payload.get("role") or "farmer").lower(),
+                "full_name": payload.get("email", "User"),
+                "is_active": True
+            }
 
-        cleaned_user = sanitize_user(user)
         g.current_user = cleaned_user
         
         return f(current_user=cleaned_user, *args, **kwargs)
@@ -55,3 +72,17 @@ def roles_required(*allowed_roles):
             return f(current_user=current_user, *args, **kwargs)
         return decorated_function
     return decorator
+
+def admin_required(f):
+    """Decorator strictly restricting endpoint access to authenticated ADMIN role only."""
+    @wraps(f)
+    @token_required
+    def decorated(current_user, *args, **kwargs):
+        role = (current_user.get("role") or "").lower()
+        if role != "admin":
+            return jsonify({
+                "success": False,
+                "error": "Access denied: Administrative privileges required."
+            }), 403
+        return f(current_user=current_user, *args, **kwargs)
+    return decorated

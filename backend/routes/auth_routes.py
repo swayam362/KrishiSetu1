@@ -1,6 +1,6 @@
 import datetime
 from flask import Blueprint, jsonify, request
-from backend.database import get_db
+from backend.database import get_db, make_id_query
 from backend.utils.security import (
     hash_password,
     verify_password,
@@ -14,19 +14,29 @@ from backend.utils.middleware import token_required, roles_required
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
+PUBLIC_REGISTRATION_ROLES = ["farmer", "buyer"]
 VALID_ROLES = ["farmer", "buyer", "admin"]
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    """Register a new user (Farmer, Buyer, or Admin) with secure validation."""
+    """Register a new user (Farmer or Buyer) with secure validation. Admin accounts cannot be created publicly."""
     data = request.get_json(silent=True)
     if not data or not isinstance(data, dict):
         return jsonify({"success": False, "error": "Invalid JSON body provided."}), 400
 
-    # 1. Validate & normalize role
+    # 1. Validate & normalize role - prevent privilege escalation
     role = sanitize_string(str(data.get('role', 'farmer'))).lower()
-    if role not in VALID_ROLES:
-        return jsonify({"success": False, "error": f"Invalid role '{role}'. Allowed roles: {', '.join(VALID_ROLES)}"}), 400
+    if role == "admin":
+        return jsonify({
+            "success": False,
+            "error": "Administrative accounts cannot be registered publicly. Initial admin must be created via secure administrative setup."
+        }), 403
+
+    if role not in PUBLIC_REGISTRATION_ROLES:
+        return jsonify({
+            "success": False,
+            "error": f"Invalid role '{role}'. Allowed roles: {', '.join(PUBLIC_REGISTRATION_ROLES)}"
+        }), 400
 
     # 2. Extract & validate core fields
     full_name = sanitize_string(str(data.get('full_name') or data.get('name') or ''))
@@ -139,6 +149,13 @@ def login():
     if not stored_hash or not verify_password(password, stored_hash):
         return jsonify({"success": False, "error": "Invalid email/phone or password."}), 401
 
+    # Verify account active status
+    if user.get("is_active") is False:
+        return jsonify({
+            "success": False,
+            "error": "Your account has been deactivated. Please contact support or administrator."
+        }), 403
+
     # Optional role check if frontend requested a specific dashboard mode
     actual_role = user.get("role", "farmer")
     if requested_role and requested_role in VALID_ROLES and actual_role != requested_role and actual_role != "admin":
@@ -150,6 +167,22 @@ def login():
     user_id = str(user.get("_id"))
     token = generate_token(user_id=user_id, role=actual_role, email=user.get("email", ""))
     safe_user = sanitize_user(user)
+
+    # Log admin sign-in event safely
+    if actual_role == "admin":
+        try:
+            admin_logs = get_db().get_collection("admin_logs")
+            admin_logs.insert_one({
+                "action": "ADMIN_LOGIN",
+                "admin_id": user_id,
+                "admin_email": user.get("email", ""),
+                "target_type": "AUTH",
+                "target_id": user_id,
+                "details": "Administrator signed in successfully.",
+                "created_at": datetime.datetime.utcnow().isoformat()
+            })
+        except Exception:
+            pass
 
     return jsonify({
         "success": True,
@@ -166,6 +199,79 @@ def get_current_user(current_user):
     return jsonify({
         "success": True,
         "user": current_user
+    }), 200
+
+
+@auth_bp.route('/me', methods=['PUT'])
+@auth_bp.route('/profile', methods=['PUT'])
+@token_required
+def update_profile(current_user):
+    """
+    Update authenticated user's profile details.
+    Persists updates directly to MongoDB users collection.
+    """
+    data = request.get_json(silent=True)
+    if not data or not isinstance(data, dict):
+        return jsonify({"success": False, "error": "Invalid JSON body provided."}), 400
+
+    user_id = str(current_user.get("id") or current_user.get("_id"))
+    users_col = get_db().get_collection("users")
+
+    # Find the actual user document
+    db_user = users_col.find_one(make_id_query(user_id))
+    if not db_user and current_user.get("email"):
+        db_user = users_col.find_one({"email": current_user.get("email")})
+
+    if not db_user:
+        return jsonify({"success": False, "error": "User account not found."}), 404
+
+    target_id = db_user.get("_id")
+    update_doc = {}
+
+    if "full_name" in data and str(data["full_name"]).strip():
+        update_doc["full_name"] = sanitize_string(str(data["full_name"]))
+
+    if "phone" in data and str(data["phone"]).strip():
+        clean_phone = sanitize_string(str(data["phone"]))
+        if not validate_phone(clean_phone):
+            return jsonify({"success": False, "error": "Please provide a valid 10-digit mobile number."}), 400
+        # Check if phone is already used by another user
+        dup_phone = users_col.find_one({"phone": clean_phone, "_id": {"$ne": target_id}})
+        if dup_phone:
+            return jsonify({"success": False, "error": "This phone number is already registered to another account."}), 409
+        update_doc["phone"] = clean_phone
+
+    if "state" in data:
+        update_doc["state"] = sanitize_string(str(data["state"]))
+    if "district" in data:
+        update_doc["district"] = sanitize_string(str(data["district"]))
+    if "village" in data:
+        update_doc["village"] = sanitize_string(str(data["village"]))
+    if "city" in data:
+        update_doc["city"] = sanitize_string(str(data["city"]))
+    if "farm_size_acres" in data:
+        update_doc["farm_size_acres"] = sanitize_string(str(data["farm_size_acres"]))
+    if "primary_crops" in data:
+        update_doc["primary_crops"] = sanitize_string(str(data["primary_crops"]))
+    if "business_name" in data:
+        update_doc["business_name"] = sanitize_string(str(data["business_name"]))
+    if "gstin" in data:
+        update_doc["gstin"] = sanitize_string(str(data["gstin"]))
+    if "bank_account" in data:
+        update_doc["bank_account"] = sanitize_string(str(data["bank_account"]))
+
+    update_doc["updated_at"] = datetime.datetime.utcnow().isoformat()
+
+    if update_doc:
+        users_col.update_one({"_id": target_id}, {"$set": update_doc})
+
+    fresh_user = users_col.find_one({"_id": target_id})
+    safe_user = sanitize_user(fresh_user)
+
+    return jsonify({
+        "success": True,
+        "message": "Profile updated successfully.",
+        "user": safe_user
     }), 200
 
 

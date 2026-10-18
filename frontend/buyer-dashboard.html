@@ -75,8 +75,8 @@
         <div class="stat-card">
           <div class="stat-info">
             <span>Recent Orders</span>
-            <h2>5 Orders</h2>
-            <small style="color: var(--primary-600);">Last 30 days volume</small>
+            <h2 id="buyer-kpi-total-orders">-- Orders</h2>
+            <small style="color: var(--primary-600);">Procurement volume</small>
           </div>
           <div class="stat-icon icon-blue">📋</div>
         </div>
@@ -84,8 +84,8 @@
         <div class="stat-card">
           <div class="stat-info">
             <span>Pending Orders</span>
-            <h2>2 In-Transit</h2>
-            <small style="color: var(--accent-amber); font-weight: 600;">₹1,29,750 Escrow Locked</small>
+            <h2 id="buyer-kpi-pending-orders">-- In-Transit</h2>
+            <small style="color: var(--accent-amber); font-weight: 600;" id="buyer-kpi-pending-sub">Escrow Secured</small>
           </div>
           <div class="stat-icon icon-amber">⏳</div>
         </div>
@@ -93,8 +93,8 @@
         <div class="stat-card">
           <div class="stat-info">
             <span>Completed Orders</span>
-            <h2>3 Delivered</h2>
-            <small style="color: var(--primary-700); font-weight: 600;">₹1,84,000 settled</small>
+            <h2 id="buyer-kpi-completed-orders">-- Delivered</h2>
+            <small style="color: var(--primary-700); font-weight: 600;" id="buyer-kpi-completed-sub">Settled</small>
           </div>
           <div class="stat-icon icon-earth">✅</div>
         </div>
@@ -140,6 +140,7 @@
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script src="js/products.js"></script>
+  <script src="js/orders.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -151,6 +152,27 @@
             document.getElementById('buyer-greeting').innerText = `Procurement Hub: ${u.business_name || u.full_name}`;
             document.getElementById('buyer-business-name').innerText = u.business_name || u.full_name;
             document.getElementById('buyer-location-tag').innerText = `Verified Procurement • ${u.city || u.district || 'Pune'}, ${u.state || 'MH'}`;
+          }
+
+          // Fetch live orders for this buyer
+          try {
+            const orderRes = await OrdersManager.getOrders();
+            const orders = orderRes.orders || [];
+            document.getElementById('buyer-kpi-total-orders').innerText = `${orders.length} Orders`;
+            
+            const pending = orders.filter(o => ['Pending', 'Accepted', 'Processing', 'Shipped'].includes(o.status));
+            const completed = orders.filter(o => ['Delivered', 'Completed'].includes(o.status));
+            
+            const pendingAmount = pending.reduce((sum, o) => sum + (parseFloat(o.total_amount) || 0), 0);
+            const completedAmount = completed.reduce((sum, o) => sum + (parseFloat(o.total_amount) || 0), 0);
+
+            document.getElementById('buyer-kpi-pending-orders').innerText = `${pending.length} Active`;
+            document.getElementById('buyer-kpi-pending-sub').innerText = `₹${pendingAmount.toLocaleString('en-IN')} Escrow Locked`;
+
+            document.getElementById('buyer-kpi-completed-orders').innerText = `${completed.length} Delivered`;
+            document.getElementById('buyer-kpi-completed-sub').innerText = `₹${completedAmount.toLocaleString('en-IN')} settled`;
+          } catch (orderErr) {
+            console.error('Error fetching buyer orders:', orderErr);
           }
         }
 

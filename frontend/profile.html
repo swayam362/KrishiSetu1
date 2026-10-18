@@ -24,70 +24,111 @@
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
         <li><a href="smart-selling.html" class="nav-link">Smart Selling USP</a></li>
-        <li><a href="farmer-dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="crop-doctor.html" class="nav-link">Crop Doctor</a></li>
+        <li><a href="farmer-dashboard.html" id="nav-dashboard-link" class="nav-link">Dashboard</a></li>
       </ul>
 
       <div class="nav-actions">
-        <button class="btn btn-outline-primary btn-sm" onclick="KrushiAuth.logout()">Log Out</button>
+        <button class="btn btn-outline-primary btn-sm" onclick="API.logout()">Log Out</button>
       </div>
     </div>
   </header>
 
   <main class="container" style="padding: 3rem 1.5rem 5rem; max-width: 860px;">
     
+    <!-- User Overview Card -->
     <div class="card card-body" style="margin-bottom: 2rem;">
       <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
-        <div class="user-avatar" style="width: 72px; height: 72px; font-size: 2rem;">👨‍🌾</div>
+        <div class="user-avatar" id="profile-avatar" style="width: 72px; height: 72px; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; background: var(--primary-100); border-radius: 50%;">👨‍🌾</div>
         <div>
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <h1 style="font-size: 1.75rem; color: var(--slate-900);">Ramesh Patil</h1>
-            <span class="badge badge-success">✔️ Verified Farmer</span>
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <h1 id="profile-heading-name" style="font-size: 1.75rem; color: var(--slate-900); margin: 0;">Loading Profile...</h1>
+            <span class="badge badge-success" id="profile-role-badge">✔️ Verified Member</span>
           </div>
-          <p style="color: var(--slate-500); font-size: 0.9rem;">Member since August 2025 • Nashik District, Maharashtra</p>
+          <p id="profile-meta-subtitle" style="color: var(--slate-500); font-size: 0.9rem; margin-top: 0.25rem;">Connecting to KrushiSetu Secure Database...</p>
         </div>
       </div>
     </div>
 
-    <!-- Profile Form -->
+    <!-- Profile Update Form -->
     <div class="card card-body">
-      <h3 style="font-size: 1.25rem; color: var(--slate-900); margin-bottom: 1.5rem;">Farm & KYC Verification Details</h3>
+      <h3 id="form-section-title" style="font-size: 1.25rem; color: var(--slate-900); margin-bottom: 1.5rem;">Account & Verification Details</h3>
       
-      <form onsubmit="event.preventDefault(); showToast('Profile details updated successfully!', 'success');">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <form id="profile-edit-form" onsubmit="handleProfileUpdate(event)">
+        <!-- Core Info -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
           <div class="form-group">
             <label class="form-label">Full Name</label>
-            <input type="text" class="form-control" value="Ramesh Patil" required />
+            <input type="text" id="prof-fullname" class="form-control" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Primary Mobile</label>
-            <input type="tel" class="form-control" value="+91 98765 43210" required />
+            <label class="form-label">Registered Email</label>
+            <input type="email" id="prof-email" class="form-control" readonly style="background: var(--slate-100);" />
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
           <div class="form-group">
-            <label class="form-label">Farm Location / Village</label>
-            <input type="text" class="form-control" value="Ozar Village, Nashik, MH" required />
+            <label class="form-label">Primary Mobile Number</label>
+            <input type="tel" id="prof-phone" class="form-control" required pattern="[0-9]{10,15}" placeholder="10-digit mobile number" />
           </div>
           <div class="form-group">
-            <label class="form-label">Total Land Holding (Acres)</label>
-            <input type="text" class="form-control" value="12.5 Acres" required />
+            <label class="form-label">State</label>
+            <input type="text" id="prof-state" class="form-control" required placeholder="e.g. Maharashtra" />
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Primary Crops Cultivated</label>
-          <input type="text" class="form-control" value="Organic Sharbati Wheat, Red Onions, Table Grapes" required />
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label">District</label>
+            <input type="text" id="prof-district" class="form-control" required placeholder="e.g. Nashik / Pune" />
+          </div>
+          <div class="form-group" id="group-village">
+            <label class="form-label" id="label-village">Village / Town</label>
+            <input type="text" id="prof-village" class="form-control" placeholder="e.g. Ozar / Chandwad" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Escrow Bank Payout Account (Aadhaar Linked)</label>
-          <input type="text" class="form-control" value="State Bank of India — A/C ••••••••••4812 (IFSC: SBIN0001234)" readonly style="background: var(--slate-100);" />
+        <!-- Farmer-Specific Details -->
+        <div id="farmer-fields" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label">Total Land Holding (Acres)</label>
+              <input type="text" id="prof-farmsize" class="form-control" placeholder="e.g. 10 Acres" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Crops Cultivated</label>
+              <input type="text" id="prof-crops" class="form-control" placeholder="e.g. Tomato, Wheat, Grapes" />
+            </div>
+          </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
-          Save Profile Updates
-        </button>
+        <!-- Buyer-Specific Details -->
+        <div id="buyer-fields" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label">Business / Firm Name</label>
+              <input type="text" id="prof-business" class="form-control" placeholder="e.g. AgroFresh Logistics Pvt Ltd" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">GSTIN / Tax ID</label>
+              <input type="text" id="prof-gstin" class="form-control" placeholder="e.g. 27AAAAA0000A1Z5" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank / Payout Section -->
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label">Escrow Bank Payout Account / Aadhaar / UPI ID</label>
+          <input type="text" id="prof-bank" class="form-control" placeholder="e.g. State Bank of India — A/C ••••••••••4812 (IFSC: SBIN0001234)" />
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <button type="submit" id="save-btn" class="btn btn-primary">
+            💾 Save Profile Updates
+          </button>
+          <span id="save-status-indicator" style="font-size: 0.88rem; color: var(--slate-500);"></span>
+        </div>
       </form>
     </div>
 
@@ -97,7 +138,7 @@
     <div class="container">
       <div class="footer-bottom">
         <div>© 2026 KrushiSetu User Identity & Trust Layer</div>
-        <div>Protected with end-to-end encryption</div>
+        <div>Protected with end-to-end encryption & database persistence</div>
       </div>
     </div>
   </footer>
@@ -105,23 +146,136 @@
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+    let activeRole = 'farmer';
+
+    async function loadUserProfile() {
       try {
-        const res = await API.getProfile();
-        if (res && res.user) {
-          const user = res.user;
-          document.querySelector('h1').innerText = user.full_name || 'User Profile';
-          const inputs = document.querySelectorAll('.form-control');
-          if (inputs[0]) inputs[0].value = user.full_name || '';
-          if (inputs[1]) inputs[1].value = user.phone || '';
-          if (inputs[2]) inputs[2].value = `${user.village || user.city || ''}, ${user.district || ''}, ${user.state || ''}`;
-          if (inputs[3] && user.farm_size_acres) inputs[3].value = `${user.farm_size_acres} Acres`;
-          if (inputs[4] && user.primary_crops) inputs[4].value = user.primary_crops;
+        const token = API.getToken();
+        if (!token) {
+          window.location.href = 'login.html';
+          return;
         }
-      } catch (e) {
-        console.log('Profile fallback to offline view:', e.message);
+
+        const res = await API.getProfile();
+        if (!res || !res.user) {
+          throw new Error('Unable to fetch profile from database.');
+        }
+
+        const user = res.user;
+        activeRole = (user.role || 'farmer').toLowerCase();
+
+        // Update Header & Badge
+        document.getElementById('profile-heading-name').innerText = user.full_name || 'My Profile';
+        const roleBadge = document.getElementById('profile-role-badge');
+        const avatar = document.getElementById('profile-avatar');
+        const dashLink = document.getElementById('nav-dashboard-link');
+
+        if (activeRole === 'buyer') {
+          roleBadge.innerText = '✔️ Verified Bulk Buyer';
+          roleBadge.className = 'badge badge-info';
+          avatar.innerText = '🏢';
+          dashLink.href = 'buyer-dashboard.html';
+          dashLink.innerText = 'Buyer Dashboard';
+          document.getElementById('buyer-fields').style.display = 'block';
+          document.getElementById('farmer-fields').style.display = 'none';
+          document.getElementById('label-village').innerText = 'Procurement City';
+          document.getElementById('form-section-title').innerText = 'Commercial Buyer & Procurement Details';
+          document.getElementById('profile-meta-subtitle').innerText = `Registered Procurement Hub • ${user.city || user.district || ''}, ${user.state || 'India'}`;
+        } else if (activeRole === 'admin') {
+          roleBadge.innerText = '🛡️ Administrator';
+          roleBadge.className = 'badge badge-danger';
+          avatar.innerText = '👑';
+          dashLink.href = 'admin-dashboard.html';
+          dashLink.innerText = 'Admin Dashboard';
+          document.getElementById('profile-meta-subtitle').innerText = 'System Governance & Administrative Role';
+        } else {
+          roleBadge.innerText = '✔️ Verified Farmer';
+          roleBadge.className = 'badge badge-success';
+          avatar.innerText = '👨‍🌾';
+          dashLink.href = 'farmer-dashboard.html';
+          dashLink.innerText = 'Farmer Dashboard';
+          document.getElementById('farmer-fields').style.display = 'block';
+          document.getElementById('buyer-fields').style.display = 'none';
+          document.getElementById('label-village').innerText = 'Farm Location / Village';
+          document.getElementById('form-section-title').innerText = 'Farm & KYC Verification Details';
+          document.getElementById('profile-meta-subtitle').innerText = `Active Producer • ${user.village || user.district || ''}, ${user.state || 'India'}`;
+        }
+
+        // Fill Form Inputs
+        document.getElementById('prof-fullname').value = user.full_name || '';
+        document.getElementById('prof-email').value = user.email || '';
+        document.getElementById('prof-phone').value = user.phone || '';
+        document.getElementById('prof-state').value = user.state || '';
+        document.getElementById('prof-district').value = user.district || '';
+        document.getElementById('prof-village').value = user.village || user.city || '';
+        document.getElementById('prof-farmsize').value = user.farm_size_acres || '';
+        document.getElementById('prof-crops').value = user.primary_crops || '';
+        document.getElementById('prof-business').value = user.business_name || '';
+        document.getElementById('prof-gstin').value = user.gstin || '';
+        document.getElementById('prof-bank').value = user.bank_account || '';
+
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+        if (typeof showToast === 'function') {
+          showToast(err.message || 'Error loading profile from database.', 'error');
+        }
       }
-    });
+    }
+
+    async function handleProfileUpdate(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('save-btn');
+      const indicator = document.getElementById('save-status-indicator');
+      
+      saveBtn.disabled = true;
+      indicator.innerText = 'Saving changes to database...';
+
+      const payload = {
+        full_name: document.getElementById('prof-fullname').value.trim(),
+        phone: document.getElementById('prof-phone').value.trim(),
+        state: document.getElementById('prof-state').value.trim(),
+        district: document.getElementById('prof-district').value.trim(),
+        bank_account: document.getElementById('prof-bank').value.trim()
+      };
+
+      if (activeRole === 'buyer') {
+        payload.city = document.getElementById('prof-village').value.trim();
+        payload.business_name = document.getElementById('prof-business').value.trim();
+        payload.gstin = document.getElementById('prof-gstin').value.trim();
+      } else {
+        payload.village = document.getElementById('prof-village').value.trim();
+        payload.farm_size_acres = document.getElementById('prof-farmsize').value.trim();
+        payload.primary_crops = document.getElementById('prof-crops').value.trim();
+      }
+
+      try {
+        const res = await API.updateProfile(payload);
+        if (res && res.success) {
+          if (typeof showToast === 'function') {
+            showToast('Profile details updated successfully in database!', 'success');
+          }
+          indicator.innerText = '✅ Saved';
+          // Cache updated user in localStorage
+          if (res.user) {
+            localStorage.setItem('krushisetu_user', JSON.stringify(res.user));
+            document.getElementById('profile-heading-name').innerText = res.user.full_name || 'My Profile';
+          }
+        } else {
+          throw new Error(res.error || 'Failed to update profile.');
+        }
+      } catch (err) {
+        console.error('Profile update failed:', err);
+        indicator.innerText = '❌ Failed';
+        if (typeof showToast === 'function') {
+          showToast(err.message || 'Could not update profile.', 'error');
+        }
+      } finally {
+        saveBtn.disabled = false;
+        setTimeout(() => { indicator.innerText = ''; }, 3500);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadUserProfile);
   </script>
 </body>
 </html>

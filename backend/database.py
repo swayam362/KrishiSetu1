@@ -24,7 +24,9 @@ class Database:
         "disease_results",
         "predictions",
         "price_predictions",
-        "transport_estimates"
+        "transport_estimates",
+        "admin_logs",
+        "system_events"
     ]
 
     def __new__(cls):
@@ -67,12 +69,24 @@ class Database:
                 self._db.products.create_index([("farmer_id", ASCENDING)])
                 self._db.orders.create_index([("farmer_id", ASCENDING)])
                 self._db.orders.create_index([("buyer_id", ASCENDING)])
+                # Index for administrative audit logs
+                self._db.admin_logs.create_index([("created_at", ASCENDING)])
             except Exception as e:
                 logger.warning(f"Index creation warning: {e}")
 
     @property
     def is_connected(self):
         return self._is_connected
+
+    def check_health(self) -> dict:
+        """Check active connectivity to MongoDB without exposing secrets."""
+        if not self._is_connected or self._client is None:
+            return {"connected": False, "status": "disconnected"}
+        try:
+            self._client.admin.command('ping')
+            return {"connected": True, "status": "connected"}
+        except Exception:
+            return {"connected": False, "status": "unreachable"}
 
     def get_collection(self, name: str):
         """Return collection object or safe collection wrapper."""

@@ -921,9 +921,7 @@
         if (token) {
           const res = await ProductsManager.getMyProducts();
           crops = res.products || [];
-        }
-
-        if (crops.length === 0) {
+        } else {
           const publicRes = await ProductsManager.getMarketplaceProducts();
           crops = (publicRes.products || []).slice(0, 4);
         }

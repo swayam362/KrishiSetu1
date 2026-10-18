@@ -1,3 +1,4 @@
+from ml.disease.plant_model import get_plant_model
 """
 KrushiSetu Crop Doctor Inference Engine
 Singleton predictor that loads pathology weights once and executes fast inference.
@@ -510,56 +511,430 @@ class DiseasePredictor:
         self.knowledge_base = PATHOLOGY_KNOWLEDGE_BASE
 
     def predict(self, crop_name: str, image_path: str = None, lang: str = "en") -> dict:
-        """
-        Execute pathology prediction for a crop leaf.
-        Returns possible disease, symptoms, organic & chemical management,
-        multilingual translations, speech script, and transparent uncertainty disclaimers.
-        """
-        crop_key = crop_name.lower().strip() if crop_name else "tomato"
-        lang_key = (lang or "en").lower().strip()
-        
-        # Match against knowledge base or fallback to closest crop
-        matched_crop = "tomato"
+        if not image_path:
+            raise ValueError("An uploaded leaf image is required.")
+
+        result = None
+        try:
+            result = get_plant_model().predict(image_path)
+        except Exception as e:
+            return {
+                "success": False,
+                "is_valid_plant": False,
+                "error_code": "IMAGE_READ_ERROR",
+                "crop": crop_name,
+                "status": "Invalid Image File",
+                "disease_name": "Invalid Image File",
+                "error": f"Could not process the uploaded image file: {str(e)}",
+                "speech_text": "Invalid image file uploaded. Please upload a clear photo of an authentic plant leaf.",
+                "disclaimer": "The AI vision model only analyzes real agricultural crop leaves."
+            }
+
+        if result and not result.get("is_valid_plant", True):
+            lang_key = (lang or "en").lower().strip()
+            
+            error_titles = {
+                "en": "Invalid Leaf Image Detected",
+                "hi": "अमान्य पत्ती की तस्वीर (Invalid Leaf Image)",
+                "mr": "अवैध पानाचा फोटो (Invalid Leaf Image)",
+                "te": "చెల్లని ఆకు చిత్రం (Invalid Leaf Image)",
+                "kn": "ಅಮಾನ್ಯ ಎಲೆಯ ಚಿತ್ರ (Invalid Leaf Image)"
+            }
+            error_messages = {
+                "en": result.get("message", "Uploaded photo does not contain a valid crop leaf."),
+                "hi": "अपलोड की गई तस्वीर किसी फसल की पत्ती नहीं है (नोटबुक पेज, कागज या अन्य गैर-कृषि वस्तु)। कृपया फसल की असली पत्ती की साफ फोटो अपलोड करें।",
+                "mr": "अपलोड केलेला फोटो पिकाच्या पानाचा नाही (वहीचे पान, कागद किंवा इतर वस्तू आढळली). कृपया पिकाच्या खऱ्या पानाचा स्पष्ट फोटो अपलोड करा.",
+                "te": "అప్‌లోడ్ చేసిన చిత్రం పంట ఆకు కాదు (నోట్‌బుక్ లేదా కాగితం). దయచేసి నిజమైన పంట ఆకు ఫోటోను అప్‌లోడ్ చేయండి.",
+                "kn": "ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಚಿತ್ರವು ಬೆಳೆಯ ಎಲೆಯಲ್ಲ (ನೋಟ್‌ಬುಕ್ ಅಥವಾ ಕಾಗದ). ದಯವಿಟ್ಟು ನಿಜವಾದ ಬೆಳೆಯ ಎಲೆಯ ಸ್ಪಷ್ಟ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ."
+            }
+            voice_scripts = {
+                "en": "Invalid image detected. Please upload a clear, close-up photo of an authentic crop leaf, not a notebook page or document.",
+                "hi": "किसान भाई, यह फोटो किसी पत्ती की नहीं है। कृपया नोटबुक या कागज के बजाय फसल की असली पत्ती की साफ फोटो अपलोड करें।",
+                "mr": "शेतकरी बंधूंनो, हा फोटो पिकाच्या पानाचा नाही. कृपया वहीच्या पानाऐवजी पिकाच्या खऱ्या पानाचा स्पष्ट फोटो अपलोड करा.",
+                "te": "రైతు సోదరులారా, ఇది పంట ఆకు చిత్రం కాదు. దయచేసి పంట ఆకు యొక్క స్పష్టమైన ఫోటోను అప్‌లోడ్ చేయండి.",
+                "kn": "ರೈತ ಬಾಂಧವರೇ, ಇದು ಬೆಳೆಯ ಎಲೆಯ ಚಿತ್ರವಲ್ಲ. ದಯವಿಟ್ಟು ನಿಜವಾದ ಬೆಳೆಯ ಎಲೆಯ ಸ್ಪಷ್ಟ ಫೋಟೋವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ."
+            }
+            
+            return {
+                "success": False,
+                "is_valid_plant": False,
+                "error_code": result.get("error_code", "INVALID_LEAF_IMAGE"),
+                "crop": crop_name,
+                "status": "Invalid Leaf Image",
+                "disease_name": error_titles.get(lang_key, error_titles["en"]),
+                "error": error_messages.get(lang_key, error_messages["en"]),
+                "reason": result.get("reason", "non_plant_image"),
+                "instructions": result.get("instructions", [
+                    "Take a direct close-up photo of a crop plant leaf (e.g. Tomato, Corn, Bell Pepper).",
+                    "Make sure the leaf covers the central frame of the camera.",
+                    "Ensure clear natural lighting without shadows, glare, or blur.",
+                    "Do not upload drawings, notebook pages, documents, or screenshots."
+                ]),
+                "speech_text": voice_scripts.get(lang_key, voice_scripts["en"]),
+                "confidence": result.get("confidence", 0.0),
+                "confidence_percent": result.get("confidence_percent", 0.0),
+                "botanical_pct": result.get("botanical_pct", 0.0),
+                "neutral_pct": result.get("neutral_pct", 0.0),
+                "translations": {
+                    "en": {"disease_name": error_titles["en"], "speech_text": voice_scripts["en"]},
+                    "hi": {"disease_name": error_titles["hi"], "speech_text": voice_scripts["hi"]},
+                    "mr": {"disease_name": error_titles["mr"], "speech_text": voice_scripts["mr"]},
+                    "te": {"disease_name": error_titles["te"], "speech_text": voice_scripts["te"]},
+                    "kn": {"disease_name": error_titles["kn"], "speech_text": voice_scripts["kn"]}
+                },
+                "disclaimer": "The AI vision model only analyzes real agricultural crop leaves. Non-plant images, notebook pages, documents, or screenshots are rejected to ensure diagnostic accuracy."
+            }
+
+        label = result["label"]
+        confidence = result["confidence"]
+        confidence_percent = result["confidence_percent"]
+
+        # 16-class Model Pathology Information
+        model_details = {
+            "Tomato___Bacterial_spot": {
+                "crop": "Tomato",
+                "disease_name": "Bacterial Spot (Xanthomonas perforans)",
+                "severity": "Moderate to High",
+                "symptoms": [
+                    "Small water-soaked circular lesions on lower foliage",
+                    "Yellow halo surrounding dark circular leaf spots",
+                    "Scab-like raised spots on fruit surfaces"
+                ],
+                "organic_remedies": [
+                    "Spray Copper Oxychloride 50% WP @ 2.5g/L water.",
+                    "Apply Bacillus subtilis bio-bactericide @ 5ml/L.",
+                    "Remove and destroy heavily blighted plants immediately."
+                ],
+                "chemical_management": [
+                    "Streptocycline 1-2g in 10L water mixed with Copper Oxychloride 25g/10L at 7-10 day intervals."
+                ],
+                "prevention": "Use certified disease-free seeds; avoid overhead irrigation; practice 3-year crop rotation."
+            },
+            "Tomato___Early_blight": {
+                "crop": "Tomato",
+                "disease_name": "Early Blight (Alternaria solani)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Concentric dark brown rings on lower leaves (target-board spots)",
+                    "Yellow halo surrounding necrotic leaf spots",
+                    "Foliage drying and premature leaf drop"
+                ],
+                "organic_remedies": [
+                    "Spray Copper Oxychloride 50% WP @ 2.5g per litre of water.",
+                    "Apply Trichoderma viride bio-fungicide @ 5g/L on foliage.",
+                    "Prune infected bottom leaves and dispose of them far from the field.",
+                    "Avoid overhead sprinkler irrigation to keep foliage dry."
+                ],
+                "chemical_management": [
+                    "Mancozeb 75% WP @ 2g/L or Azoxystrobin 23% SC @ 1ml/L water at 10-day intervals."
+                ],
+                "prevention": "Rotate crops with non-solanaceous crops for 2-3 years; ensure well-drained soil and optimal plant spacing."
+            },
+            "Tomato___Late_blight": {
+                "crop": "Tomato",
+                "disease_name": "Late Blight (Phytophthora infestans)",
+                "severity": "High / Severe",
+                "symptoms": [
+                    "Water-soaked irregular pale-green to dark brown lesions on leaves",
+                    "White fungal mold growth on leaf undersides in humid weather",
+                    "Rapid whole-plant wilting and collapse"
+                ],
+                "organic_remedies": [
+                    "Apply Copper Oxychloride 50% WP @ 3g/L as preventative foliage barrier.",
+                    "Remove and burn severely infected foliage immediately."
+                ],
+                "chemical_management": [
+                    "Metalaxyl 8% + Mancozeb 64% WP (Ridomil MZ) @ 2g/L or Dimethomorph 50% WP @ 1g/L."
+                ],
+                "prevention": "Plant resistant cultivars; avoid wet foliage overnight; eliminate volunteer tomato/potato plants."
+            },
+            "Tomato___Leaf_Mold": {
+                "crop": "Tomato",
+                "disease_name": "Leaf Mold (Passalora fulva)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Pale green or yellowish spots on upper leaf surfaces",
+                    "Olive green to gray velvety mold growth on lower leaf surfaces"
+                ],
+                "organic_remedies": [
+                    "Improve greenhouse ventilation and air circulation to reduce humidity below 85%.",
+                    "Spray Neem oil (10,000 ppm) @ 2ml/L water."
+                ],
+                "chemical_management": [
+                    "Chlorothalonil 75% WP @ 2g/L or Difenoconazole 25% EC @ 0.5ml/L."
+                ],
+                "prevention": "Maintain adequate plant spacing; ensure proper aeration; drip irrigate instead of overhead."
+            },
+            "Tomato___Septoria_leaf_spot": {
+                "crop": "Tomato",
+                "disease_name": "Septoria Leaf Spot (Septoria lycopersici)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Numerous small, circular spots with dark brown margins and gray centers",
+                    "Tiny black specks (pycnidia) visible inside older leaf lesions"
+                ],
+                "organic_remedies": [
+                    "Mulch heavily around base of tomato plants to prevent splash dispersal.",
+                    "Apply Copper Oxychloride @ 2.5g/L or bio-fungicide Bacillus amyloliquefaciens."
+                ],
+                "chemical_management": [
+                    "Mancozeb 75% WP @ 2.5g/L or Chlorothalonil @ 2g/L at 7-10 day intervals."
+                ],
+                "prevention": "Stake plants upright; avoid working in wet foliage; destroy crop debris after harvest."
+            },
+            "Tomato___Spider_mites Two-spotted_spider_mite": {
+                "crop": "Tomato",
+                "disease_name": "Two-Spotted Spider Mite (Tetranychus urticae)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Yellow or bronze stippling / flecking on leaf tops",
+                    "Fine silk webbing on leaf undersides and growing tips"
+                ],
+                "organic_remedies": [
+                    "Spray Neem oil 5ml/L or soap emulsion solution to suffocate mites.",
+                    "Release predatory mites (Phytoseiulus persimilis) as biocontrol."
+                ],
+                "chemical_management": [
+                    "Propargite 57% EC @ 2ml/L or Spiromesifen 22.9% SC @ 1ml/L water."
+                ],
+                "prevention": "Avoid drought stress and dusty conditions; weed field borders regularly."
+            },
+            "Tomato___Target_Spot": {
+                "crop": "Tomato",
+                "disease_name": "Target Spot (Corynespora cassiicola)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Brown lesions with concentric rings and distinct yellow margins on foliage",
+                    "Foliage collapse and defoliation under warm, wet conditions"
+                ],
+                "organic_remedies": [
+                    "Apply Copper-based fungicides @ 2.5g/L.",
+                    "Ensure high canopy airflow and wide crop row spacing."
+                ],
+                "chemical_management": [
+                    "Azoxystrobin + Difenoconazole @ 1ml/L or Pyraclostrobin 20% WG @ 1g/L."
+                ],
+                "prevention": "Practice strict crop rotation; avoid overhead irrigation; remove lower senescing leaves."
+            },
+            "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+                "crop": "Tomato",
+                "disease_name": "Tomato Yellow Leaf Curl Virus (TYLCV)",
+                "severity": "Severe",
+                "symptoms": [
+                    "Stunted plant growth and bushy erect appearance",
+                    "Upward curling and yellowing (chlorosis) of leaf margins",
+                    "Severely reduced flower and fruit set"
+                ],
+                "organic_remedies": [
+                    "Install yellow sticky traps (15-20 traps/acre) to trap whitefly vectors.",
+                    "Spray 5% Neem Seed Kernel Extract (NSKE) or Neem oil @ 3ml/L."
+                ],
+                "chemical_management": [
+                    "Imidacloprid 17.8% SL @ 0.5ml/L or Thiamethoxam 25% WG @ 0.3g/L to control vector whiteflies."
+                ],
+                "prevention": "Use virus-resistant cultivars; use insect-proof netting in nurseries; rogue out infected plants."
+            },
+            "Tomato___Tomato_mosaic_virus": {
+                "crop": "Tomato",
+                "disease_name": "Tomato Mosaic Virus (ToMV)",
+                "severity": "Moderate to High",
+                "symptoms": [
+                    "Mottled light and dark green mosaic patterns on leaves",
+                    "Distorted, blistered, or narrow leaves",
+                    "Internal browning in fruit walls"
+                ],
+                "organic_remedies": [
+                    "Soak pruning tools in 20% nonfat dry milk or 10% trisodium phosphate solution.",
+                    "Remove and incinerate infected plants immediately."
+                ],
+                "chemical_management": [
+                    "No chemical cure exists for viruses. Focus on strict sanitation and insect hygiene."
+                ],
+                "prevention": "Wash hands with soap before handling plants; plant certified ToMV-resistant seeds."
+            },
+            "Tomato___healthy": {
+                "crop": "Tomato",
+                "disease_name": "Healthy Tomato Leaf",
+                "severity": "None detected",
+                "symptoms": [
+                    "Vibrant green leaf coloration with no necrotic lesions",
+                    "Normal leaf architecture and vigorous tissue vigor"
+                ],
+                "organic_remedies": [
+                    "Continue standard organic fertilization (vermicompost, Jeevamrut).",
+                    "Maintain regular preventive foliar sprays of Trichoderma viride."
+                ],
+                "chemical_management": [
+                    "No chemical fungicides or bactericides required."
+                ],
+                "prevention": "Maintain optimal irrigation, balanced N-P-K nutrition, and periodic scouting."
+            },
+            "Pepper,_bell___Bacterial_spot": {
+                "crop": "Bell Pepper",
+                "disease_name": "Bacterial Spot (Xanthomonas campestris)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Small water-soaked green lesions on leaf undersides turning brown",
+                    "Premature defoliation exposing bell peppers to sunscald"
+                ],
+                "organic_remedies": [
+                    "Spray Copper Hydroxide @ 2.5g/L water during overcast, humid days.",
+                    "Apply Trichoderma harzianum or Pseudomonas fluorescens as bio-protectants."
+                ],
+                "chemical_management": [
+                    "Copper Oxychloride 50% WP @ 2.5g/L tank-mixed with Streptocycline @ 1g/10L water."
+                ],
+                "prevention": "Sow certified disease-free seeds; eliminate solanaceous weeds; rotate fields."
+            },
+            "Pepper,_bell___healthy": {
+                "crop": "Bell Pepper",
+                "disease_name": "Healthy Bell Pepper Leaf",
+                "severity": "None detected",
+                "symptoms": [
+                    "Deep green glossy foliage with clean margins",
+                    "Uniform leaf blade texture with no chlorosis or spots"
+                ],
+                "organic_remedies": [
+                    "Maintain soil organic carbon with regular compost applications.",
+                    "Apply micro-nutrient foliar spray (Zinc, Boron) during flowering."
+                ],
+                "chemical_management": [
+                    "No chemical treatment required."
+                ],
+                "prevention": "Ensure well-drained raised beds and consistent drip irrigation."
+            },
+            "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": {
+                "crop": "Corn (Maize)",
+                "disease_name": "Gray Leaf Spot (Cercospora zeae-maydis)",
+                "severity": "Moderate to High",
+                "symptoms": [
+                    "Small tan spots with yellow halos expanding into long, narrow rectangular lesions",
+                    "Lesions restricted by leaf veins giving distinct squared-off edges"
+                ],
+                "organic_remedies": [
+                    "Tillage to bury residue and accelerate decomposition of infected maize stalks.",
+                    "Spray bio-fungicide Bacillus subtilis @ 5g/L."
+                ],
+                "chemical_management": [
+                    "Azoxystrobin 18.2% + Difenoconazole 11.4% SC @ 1ml/L or Pyraclostrobin @ 1ml/L."
+                ],
+                "prevention": "Rotate with non-host crops like soybean or cotton; plant resistant corn hybrids."
+            },
+            "Corn_(maize)___Common_rust_": {
+                "crop": "Corn (Maize)",
+                "disease_name": "Common Rust (Puccinia sorghi)",
+                "severity": "Moderate",
+                "symptoms": [
+                    "Golden-brown to cinnamon-brown powdery pustules scattered over both leaf surfaces",
+                    "Pustules erupting through leaf epidermis shedding orange rust spores"
+                ],
+                "organic_remedies": [
+                    "Foliar spray of sour buttermilk solution (1:10) or fermented cow urine extract.",
+                    "Apply sulfur-based wettable powder @ 2g/L."
+                ],
+                "chemical_management": [
+                    "Mancozeb 75% WP @ 2g/L or Propiconazole 25% EC @ 1ml/L water."
+                ],
+                "prevention": "Plant rust-tolerant hybrid corn; early season planting avoids peak spore flights."
+            },
+            "Corn_(maize)___Northern_Leaf_Blight": {
+                "crop": "Corn (Maize)",
+                "disease_name": "Northern Corn Leaf Blight (Exserohilum turcicum)",
+                "severity": "Moderate to High",
+                "symptoms": [
+                    "Large, elliptical cigar-shaped grayish-green to tan lesions on foliage",
+                    "Dark concentric zones of fungal sporulation visible during damp mornings"
+                ],
+                "organic_remedies": [
+                    "Apply Trichoderma viride @ 5g/L on lower foliage.",
+                    "Prompt disposal of crop residue after cob harvest."
+                ],
+                "chemical_management": [
+                    "Carbendazim 12% + Mancozeb 63% WP (Saaf) @ 2g/L or Azoxystrobin @ 1ml/L."
+                ],
+                "prevention": "Select Northern Corn Leaf Blight resistant hybrids; clean plow tillage."
+            },
+            "Corn_(maize)___healthy": {
+                "crop": "Corn (Maize)",
+                "disease_name": "Healthy Corn Leaf",
+                "severity": "None detected",
+                "symptoms": [
+                    "Vibrant green wide blades with strong central midribs",
+                    "Clean leaf canopy with no fungal pustules or blight"
+                ],
+                "organic_remedies": [
+                    "Apply balanced bio-fertilizers (Azospirillum and PSB).",
+                    "Provide balanced zinc and nitrogen nutrition."
+                ],
+                "chemical_management": [
+                    "No chemical sprays necessary."
+                ],
+                "prevention": "Maintain optimal plant population and soil moisture management."
+            }
+        }
+
+        crop_key = (crop_name or "").lower().strip()
+        matched_kb_crop = "tomato"
         for k in self.knowledge_base.keys():
             if k in crop_key:
-                matched_crop = k
+                matched_kb_crop = k
                 break
 
-        diag_data = self.knowledge_base[matched_crop]
-        
-        # Base English values (guarantees test assertions remain strictly satisfied)
-        disease_name = diag_data["disease_name"]
-        severity = diag_data["severity"]
-        symptoms = diag_data["symptoms"]
-        organic_remedies = diag_data["organic_remedies"]
-        chemical_management = diag_data["chemical_management"]
-        prevention = diag_data["prevention"]
-        
-        # Voice script generation
-        speech_text = f"Diagnosis for {crop_name}: {disease_name} detected with {severity} severity. Recommended organic spray: {organic_remedies[0]}"
-        
-        # Check for localized content
-        trans = diag_data.get("translations", {})
+        kb_fallback = self.knowledge_base[matched_kb_crop]
+
+        if label in model_details:
+            info = model_details[label]
+            crop_display = info["crop"]
+            disease_name = info["disease_name"]
+            severity = info["severity"]
+            symptoms = info["symptoms"]
+            organic_remedies = info["organic_remedies"]
+            chemical_management = info["chemical_management"]
+            prevention = info["prevention"]
+        else:
+            disease_name = label.split("___", 1)[-1].replace("_", " ").title()
+            crop_display = crop_name.capitalize() if crop_name else "Crop"
+            severity = kb_fallback["severity"]
+            symptoms = kb_fallback["symptoms"]
+            organic_remedies = kb_fallback["organic_remedies"]
+            chemical_management = kb_fallback["chemical_management"]
+            prevention = kb_fallback["prevention"]
+
+        healthy = "healthy" in label.lower()
+        status = "Healthy leaf predicted" if healthy else "Possible disease detected"
+        if healthy:
+            severity = "None detected"
+
+        # Translations & speech synthesis
+        trans = kb_fallback.get("translations", {})
+        lang_key = (lang or "en").lower().strip()
+        speech_text = (
+            f"Diagnosis for {crop_display}: {disease_name}. "
+            f"Model confidence: {confidence_percent} percent."
+        )
         if lang_key in trans:
-            t = trans[lang_key]
-            speech_text = t.get("speech_text", speech_text)
+            speech_text = trans[lang_key].get("speech_text", speech_text)
 
         return {
-            "crop": crop_name.capitalize(),
-            "status": "Possible disease detected",
+            "success": True,
+            "is_valid_plant": True,
+            "crop": crop_display,
+            "status": status,
             "disease_name": disease_name,
-            "confidence": diag_data["confidence"],
+            "confidence": confidence,
+            "confidence_percent": confidence_percent,
             "severity": severity,
             "symptoms": symptoms,
             "organic_remedies": organic_remedies,
             "chemical_management": chemical_management,
             "prevention": prevention,
-            "model_mode": "Trained ML Agronomy Model",
+            "model_mode": "Trained Plant Disease Vision Model (PyTorch)",
             "speech_text": speech_text,
             "translations": trans,
             "selected_lang": lang_key,
             "disclaimer": "AI outputs are decision-support recommendations based on leaf image analysis and are not 100% guaranteed diagnostic facts. For critical infestations, verify with your local Krishi Vigyan Kendra (KVK) extension officer."
         }
+
 
 predictor = DiseasePredictor()
 

@@ -10,6 +10,7 @@ from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 
 from backend.config import Config
+from backend.database import get_db
 from backend.routes.auth_routes import auth_bp
 from backend.routes.product_routes import product_bp
 from backend.routes.order_routes import order_bp
@@ -17,6 +18,7 @@ from backend.routes.message_routes import message_bp
 from backend.routes.review_routes import review_bp
 from backend.routes.ai_routes import ai_bp
 from backend.routes.smart_selling_routes import smart_selling_bp
+from backend.routes.admin_routes import admin_bp
 
 def create_app():
     app = Flask(
@@ -37,6 +39,7 @@ def create_app():
     app.register_blueprint(review_bp)
     app.register_blueprint(ai_bp)
     app.register_blueprint(smart_selling_bp)
+    app.register_blueprint(admin_bp)
     
     # Root & Static Page Routes
     @app.route("/")
@@ -119,19 +122,26 @@ def create_app():
     # API Healthcheck
     @app.route("/api/health", methods=["GET"])
     def health_check():
+        db_health = get_db().check_health()
+        is_healthy = db_health.get("connected", False)
         return jsonify({
-            "status": "healthy",
+            "status": "healthy" if is_healthy else "degraded",
+            "backend": "running",
+            "database": {
+                "status": db_health.get("status", "disconnected"),
+                "healthy": is_healthy
+            },
             "app": "KrushiSetu Backend",
-            "version": "1.0.0-phase1",
+            "version": "1.0.0",
             "environment": "development" if Config.DEBUG else "production",
             "security_features": {
                 "jwt_auth": True,
                 "bcrypt_passwords": True,
                 "data_minimization": True,
                 "input_sanitization": True,
-                "rate_limiting_ready": True
+                "admin_authorization": True
             }
-        }), 200
+        }), 200 if is_healthy else 503
 
     return app
 

@@ -184,12 +184,12 @@ def list_products():
     min_qty = request.args.get('min_qty')
 
     products_col = get_db().get_collection("products")
-    all_products = products_col.find()
+    all_products = list(products_col.find())
 
     # Seed initial items if collection is empty
-    if not all_products:
+    if not all_products and products_col.count_documents({}) == 0:
         _seed_default_products(products_col)
-        all_products = products_col.find()
+        all_products = list(products_col.find())
 
     filtered = []
     for p in all_products:

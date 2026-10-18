@@ -82,7 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(`Welcome back, ${response.user.full_name || 'User'}!`, 'success');
         
         setTimeout(() => {
-          if (response.user.role === 'buyer') {
+          if (response.user.role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+          } else if (response.user.role === 'buyer') {
             window.location.href = 'buyer-dashboard.html';
           } else {
             window.location.href = 'farmer-dashboard.html';

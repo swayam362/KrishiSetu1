@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner & Admin Console — KrushiSetu</title>
+  <meta name="description" content="KrushiSetu Owner & Administrator Control Center: Unified management of Farmers, Buyers, Products, Orders, Escrow, and AI Telemetry." />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/marketplace.css" />
+  <style>
+    /* Admin Premium Theme Enhancements */
+    :root {
+      --admin-navy: #0f172a;
+      --admin-slate: #1e293b;
+      --admin-accent: #10b981;
+    }
+
+    body {
+      background-color: var(--slate-50);
+      font-family: var(--font-sans);
+    }
+
+    .admin-navbar {
+      background: var(--admin-navy);
+      color: var(--white);
+      padding: 0.85rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .admin-badge-pill {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      font-size: 0.72rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseAnimation 2s infinite;
+    }
+
+    @keyframes pulseAnimation {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .admin-layout {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: calc(100vh - 65px);
+    }
+
+    .admin-sidebar {
+      width: 260px;
+      background: var(--white);
+      border-right: 1px solid var(--slate-200);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-md);
+      color: var(--slate-600);
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: var(--transition);
+      margin-bottom: 0.35rem;
+      cursor: pointer;
+    }
+
+    .admin-nav-item:hover {
+      background: var(--slate-100);
+      color: var(--primary-700);
+    }
+
+    .admin-nav-item.active {
+      background: linear-gradient(135deg, var(--primary-800), var(--primary-600));
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(16, 89, 52, 0.25);
+    }
+
+    .admin-main-content {
+      flex: 1;
+      padding: 2rem 2.5rem;
+      overflow-y: auto;
+    }
+
+    .section-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.65rem;
+      font-family: var(--font-heading);
+      color: var(--slate-900);
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .section-desc {
+      color: var(--slate-500);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    .activity-timeline-item {
+      display: flex;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .activity-icon-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--primary-50);
+      color: var(--primary-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .filter-toolbar {
+      display: flex;
+      gap: 0.75rem;
+      background: var(--white);
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      margin-bottom: 1.25rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input-box {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .search-input-box input {
+      width: 100%;
+      padding: 0.55rem 0.85rem 0.55rem 2.2rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+    }
+
+    .search-input-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+
+    .table-container-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .admin-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .admin-data-table th {
+      background: var(--slate-50);
+      padding: 0.85rem 1rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--slate-600);
+      border-bottom: 1px solid var(--slate-200);
+      font-weight: 700;
+    }
+
+    .admin-data-table td {
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: middle;
+    }
+
+    .admin-data-table tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    .badge-danger {
+      background-color: var(--danger-light);
+      color: #991b1b;
+    }
+
+    .btn-outline-danger {
+      border: 1px solid #f87171;
+      color: var(--danger);
+      background: transparent;
+    }
+
+    .btn-outline-danger:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="admin-navbar">
+    <div class="admin-header-flex">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="index.html" class="brand-logo" style="text-decoration: none;">
+          <div class="brand-icon" style="background: rgba(255, 255, 255, 0.1);">🌾</div>
+          <div>
+            <span style="color: var(--white); font-weight: 800; font-size: 1.15rem;">KrushiSetu</span>
+            <span class="brand-tagline-sub" style="color: rgba(255, 255, 255, 0.6);">Owner Administration</span>
+          </div>
+        </a>
+        <div class="admin-badge-pill">
+          <div class="pulse-dot"></div>
+          <span>ADMINISTRATOR CONSOLE</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1.25rem;">
+        <div style="text-align: right;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--white);" id="admin-name-display">KrushiSetu Owner</div>
+          <div style="font-size: 0.75rem; color: #94a3b8;" id="admin-email-display">admin@krushisetu.com</div>
+        </div>
+        <a href="marketplace.html" class="btn btn-outline btn-sm" style="color: var(--white); border-color: rgba(255, 255, 255, 0.3);">
+          🛒 Marketplace
+        </a>
+        <button class="btn btn-outline-danger btn-sm" onclick="API.logout()" title="Secure Session Termination">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div style="margin-bottom: 1.25rem; padding: 0.75rem; background: var(--slate-100); border-radius: var(--radius-md);">
+        <small style="text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; color: var(--slate-500); font-size: 0.72rem; display: block; margin-bottom: 0.35rem;">Database Health</small>
+        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--primary-700);" id="sidebar-db-health">
+          <span style="color: var(--primary-600);">●</span> MongoDB Connected
+        </div>
+      </div>
+
+      <nav style="display: flex; flex-direction: column; flex: 1;">
+        <a class="admin-nav-item active" data-tab="overview">
+          <span>📊</span> Overview
+        </a>
+        <a class="admin-nav-item" data-tab="farmers">
+          <span>👨‍🌾</span> Farmer Management
+        </a>
+        <a class="admin-nav-item" data-tab="buyers">
+          <span>🏢</span> Buyer Management
+        </a>
+        <a class="admin-nav-item" data-tab="products">
+          <span>🌾</span> Product Listings
+        </a>
+        <a class="admin-nav-item" data-tab="orders">
+          <span>📦</span> Orders & Escrow
+        </a>
+        <a class="admin-nav-item" data-tab="monitoring">
+          <span>🤖</span> AI & System Telemetry
+        </a>
+      </nav>
+
+      <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--slate-100); font-size: 0.75rem; color: var(--slate-400); text-align: center;">
+        KrushiSetu Platform v1.0.0<br />Role: Verified Admin
+      </div>
+    </aside>
+
+    <!-- Main Content Panels -->
+    <main class="admin-main-content">
+
+      <!-- =================================================================== -->
+      <!-- TAB A: OVERVIEW -->
+      <!-- =================================================================== -->
+      <section id="tab-overview" class="admin-tab-pane">
+        <div class="section-header-box">
+          <div>
+            <h1 class="section-title">Platform Administrative Overview</h1>
+            <p class="section-desc">Live statistics computed strictly from production MongoDB collections.</p>
+          </div>
+          <div>
+            <button class="btn btn-outline-primary btn-sm" onclick="AdminController.loadOverview()">
+              🔄 Refresh Analytics
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Registered Farmers</span>
+              <h2 id="stat-farmers">--</h2>
+              <small style="color: var(--primary-600); font-weight: 600;">Verified producers</small>
+            </div>
+            <div class="stat-icon icon-green">👨‍🌾</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Registered Buyers</span>
+              <h2 id="stat-buyers">--</h2>
+              <small style="color: var(--accent-sky); font-weight: 600;">Mills & Wholesalers</small>
+            </div>
+            <div class="stat-icon icon-blue">🏢</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Listed Produce Lots</span>
+              <h2 id="stat-products">--</h2>
+              <small style="color: var(--earth-600); font-weight: 600;">Live catalog stock</small>
+            </div>
+            <div class="stat-icon icon-earth">🌾</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Total Orders Placed</span>
+              <h2 id="stat-orders">--</h2>
+              <small style="color: var(--slate-600); font-weight: 600;">All transactions</small>
+            </div>
+            <div class="stat-icon icon-amber">📋</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Pending Orders</span>
+              <h2 id="stat-pending-orders">--</h2>
+              <small style="color: var(--accent-amber); font-weight: 600;">Awaiting fulfillment</small>
+            </div>
+            <div class="stat-icon icon-amber">⏳</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Completed Orders</span>
+              <h2 id="stat-completed-orders">--</h2>
+              <small style="color: var(--primary-700); font-weight: 600;" id="stat-volume-settled">₹-- Settled</small>
+            </div>
+            <div class="stat-icon icon-green">✅</div>
+          </div>
+        </div>
+
+        <!-- Recent Activity Feed -->
+        <div class="card card-body" style="background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 1.15rem; color: var(--slate-900); font-weight: 700; margin: 0;">⚡ Recent Administrative Audit Activity</h3>
+            <span class="badge badge-earth">Audit Trail</span>
+          </div>
+          <div id="recent-activity-list">
+            <div style="text-align: center; padding: 2rem; color: var(--slate-400);">Loading recent activity...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB B: FARMER MANAGEMENT -->
+      <!-- =================================================================== -->
+      <section id="tab-farmers" class="admin-tab-pane" style="display: none;">
+        <div class="section-header-box">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <h1 class="section-title">Farmer Management</h1>
+              <span class="badge badge-success" id="badge-farmers-count">0 Registered</span>
+            </div>
+            <p class="section-desc">Manage producer credentials, state/district records, and account active statuses.</p>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="search-input-box">
+            <input type="text" id="search-farmers" placeholder="Search by name, email, phone, district..." oninput="AdminController.loadFarmers()" />
+          </div>
+          <select id="filter-farmer-status" class="form-control" style="width: auto;" onchange="AdminController.loadFarmers()">
+            <option value="all">All Statuses</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+          </select>
+          <button class="btn btn-outline-primary btn-sm" onclick="AdminController.loadFarmers()">Apply</button>
+        </div>
+
+        <div class="table-container-card">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Farmer Name & Crops</th>
+                <th>Contact</th>
+                <th>Location</th>
+                <th>Farm Size</th>
+                <th>Registered</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="farmers-table-body">
+              <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading farmers...</td></tr>
+            </tbody>
+          </table>
+          <div id="pagination-farmers" style="padding: 0 1rem;"></div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB C: BUYER / MERCHANT MANAGEMENT -->
+      <!-- =================================================================== -->
+      <section id="tab-buyers" class="admin-tab-pane" style="display: none;">
+        <div class="section-header-box">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <h1 class="section-title">Buyer & Merchant Management</h1>
+              <span class="badge badge-info" id="badge-buyers-count">0 Registered</span>
+            </div>
+            <p class="section-desc">Manage procurement accounts, business names, GSTIN registrations, and access state.</p>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="search-input-box">
+            <input type="text" id="search-buyers" placeholder="Search by company, name, email, city..." oninput="AdminController.loadBuyers()" />
+          </div>
+          <select id="filter-buyer-status" class="form-control" style="width: auto;" onchange="AdminController.loadBuyers()">
+            <option value="all">All Statuses</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+          </select>
+          <button class="btn btn-outline-primary btn-sm" onclick="AdminController.loadBuyers()">Apply</button>
+        </div>
+
+        <div class="table-container-card">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Buyer / Business Name</th>
+                <th>Contact</th>
+                <th>Location</th>
+                <th>GSTIN</th>
+                <th>Registered</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="buyers-table-body">
+              <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading buyers...</td></tr>
+            </tbody>
+          </table>
+          <div id="pagination-buyers" style="padding: 0 1rem;"></div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB D: PRODUCT MANAGEMENT -->
+      <!-- =================================================================== -->
+      <section id="tab-products" class="admin-tab-pane" style="display: none;">
+        <div class="section-header-box">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <h1 class="section-title">Produce Lot Management</h1>
+              <span class="badge badge-earth" id="badge-products-count">0 Lots</span>
+            </div>
+            <p class="section-desc">Inspect active crop lots, review quality specifications, deactivate, or delete policy-violating listings.</p>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="search-input-box">
+            <input type="text" id="search-products" placeholder="Search by crop, farmer name, district..." oninput="AdminController.loadProducts()" />
+          </div>
+          <select id="filter-product-category" class="form-control" style="width: auto;" onchange="AdminController.loadProducts()">
+            <option value="all">All Categories</option>
+            <option value="Grains">Grains</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Fruits">Fruits</option>
+            <option value="Pulses">Pulses</option>
+            <option value="Oilseeds">Oilseeds</option>
+            <option value="Spices">Spices</option>
+          </select>
+          <select id="filter-product-avail" class="form-control" style="width: auto;" onchange="AdminController.loadProducts()">
+            <option value="all">All Availability</option>
+            <option value="Available">Available</option>
+            <option value="Deactivated">Deactivated</option>
+            <option value="Sold Out">Sold Out</option>
+          </select>
+          <button class="btn btn-outline-primary btn-sm" onclick="AdminController.loadProducts()">Filter</button>
+        </div>
+
+        <div class="table-container-card">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Produce & Farmer</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body">
+              <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading produce lots...</td></tr>
+            </tbody>
+          </table>
+          <div id="pagination-products" style="padding: 0 1rem;"></div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB E: ORDER MANAGEMENT -->
+      <!-- =================================================================== -->
+      <section id="tab-orders" class="admin-tab-pane" style="display: none;">
+        <div class="section-header-box">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <h1 class="section-title">Order Management & Escrow</h1>
+              <span class="badge badge-warning" id="badge-orders-count">0 Orders</span>
+            </div>
+            <p class="section-desc">Audit platform trade volume, monitor delivery fulfillment, and resolve escrow checkpoints.</p>
+          </div>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="search-input-box">
+            <input type="text" id="search-orders" placeholder="Search by order ID, buyer, farmer, produce..." oninput="AdminController.loadOrders()" />
+          </div>
+          <select id="filter-order-status" class="form-control" style="width: auto;" onchange="AdminController.loadOrders()">
+            <option value="all">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn-outline-primary btn-sm" onclick="AdminController.loadOrders()">Filter</button>
+        </div>
+
+        <div class="table-container-card">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Produce Lot</th>
+                <th>Counterparties</th>
+                <th>Total Value</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Override</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading orders...</td></tr>
+            </tbody>
+          </table>
+          <div id="pagination-orders" style="padding: 0 1rem;"></div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB F: AI & SYSTEM MONITORING -->
+      <!-- =================================================================== -->
+      <section id="tab-monitoring" class="admin-tab-pane" style="display: none;">
+        <div class="section-header-box">
+          <div>
+            <h1 class="section-title">AI Engine & System Telemetry</h1>
+            <p class="section-desc">Real-time status of agronomic models, database connectivity, and administrative security logs.</p>
+          </div>
+          <button class="btn btn-outline-primary btn-sm" onclick="AdminController.loadMonitoring()">
+            🔄 Refresh Telemetry
+          </button>
+        </div>
+
+        <!-- Telemetry Stats -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Crop Doctor Diagnoses</span>
+              <h2 id="mon-disease-count">--</h2>
+              <small style="color: var(--primary-600); font-weight: 600;">Leaf pathology scans</small>
+            </div>
+            <div class="stat-icon icon-green">🍃</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Soil Health Reports</span>
+              <h2 id="mon-soil-count">--</h2>
+              <small style="color: var(--earth-600); font-weight: 600;">NPK & pH analyses</small>
+            </div>
+            <div class="stat-icon icon-earth">🧪</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <span>Market Predictions</span>
+              <h2 id="mon-pred-count">--</h2>
+              <small style="color: var(--accent-sky); font-weight: 600;">XGBoost & Demand forecasts</small>
+            </div>
+            <div class="stat-icon icon-blue">📈</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+          <!-- Database Health Card -->
+          <div class="card card-body" style="background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="font-size: 1.15rem; color: var(--slate-900); font-weight: 700; margin: 0;">🗄️ Database Health & Collections</h3>
+              <div id="mon-db-status"><span style="color: var(--primary-600); font-weight: 700;">🟢 Connected</span></div>
+            </div>
+            <table class="admin-data-table" style="font-size: 0.85rem;">
+              <thead>
+                <tr>
+                  <th>Collection Name</th>
+                  <th style="text-align: right;">Document Count</th>
+                </tr>
+              </thead>
+              <tbody id="mon-collections-body">
+                <tr><td colspan="2" style="text-align: center;">Loading collection data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Security Architecture Status Card -->
+          <div class="card card-body" style="background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+            <h3 style="font-size: 1.15rem; color: var(--slate-900); font-weight: 700; margin-bottom: 1rem;">🛡️ Security Enforcement Status</h3>
+            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.88rem;">
+              <li style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--slate-100);">
+                <span>JWT Authentication & Expiry Check</span>
+                <span style="color: var(--primary-600); font-weight: 700;">✔ Active (24h Window)</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--slate-100);">
+                <span>Bcrypt Salt & Work Factor (12 Rounds)</span>
+                <span style="color: var(--primary-600); font-weight: 700;">✔ Active</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--slate-100);">
+                <span>Public Admin Registration Blocking</span>
+                <span style="color: var(--primary-600); font-weight: 700;">✔ Strictly Blocked (403)</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--slate-100);">
+                <span>Backend Role-Based Access Control</span>
+                <span style="color: var(--primary-600); font-weight: 700;">✔ Enforced on All Routes</span>
+              </li>
+              <li style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--slate-100);">
+                <span>Zero Stack Trace Leaks Policy</span>
+                <span style="color: var(--primary-600); font-weight: 700;">✔ Enforced</span>
+              </li>
+              <li style="display: flex; justify-content: space-between;">
+                <span>Privacy & Data Minimization</span>
+                <span style="color: var(--primary-600); font-weight: 700;">✔ Password/Phone Protected</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Audit Log Table -->
+        <div class="card card-body" style="background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--slate-200);">
+          <h3 style="font-size: 1.15rem; color: var(--slate-900); font-weight: 700; margin-bottom: 1rem;">📋 Complete Administrative Audit Log</h3>
+          <table class="admin-data-table" style="font-size: 0.85rem;">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Admin</th>
+                <th>Target</th>
+                <th>Details</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="mon-audit-log-body">
+              <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading audit logs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

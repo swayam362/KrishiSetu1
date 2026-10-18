@@ -63,7 +63,7 @@
       <!-- Upload Zone -->
       <div>
         <div class="upload-zone" onclick="document.getElementById('crop-file-input').click()">
-          <input type="file" id="crop-file-input" accept="image/*" style="display: none;" />
+          <input type="file" id="crop-file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)" />
           
           <div class="preview-holder" id="preview-holder"></div>
           <div class="laser-line" id="laser-line"></div>
@@ -72,7 +72,7 @@
             <div class="scan-icon-bubble">📸</div>
             <h3 style="font-size: 1.2rem; color: var(--primary-900); margin-bottom: 0.25rem;" data-i18n="upload_box_title">Upload Crop Leaf Photo</h3>
             <p style="color: var(--slate-500); font-size: 0.88rem;" data-i18n="upload_box_sub">Click to upload or drag & drop (JPG, PNG)</p>
-            <button type="button" class="btn btn-outline-primary btn-sm" style="margin-top: 1rem;" data-i18n="select_image_btn">
+            <button type="button" class="btn btn-outline-primary btn-sm" style="margin-top: 1rem;" data-i18n="select_image_btn" onclick="event.stopPropagation(); document.getElementById('crop-file-input').click()">
               📸 Select Image
             </button>
           </div>

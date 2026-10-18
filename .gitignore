@@ -40,3 +40,10 @@ Thumbs.db
 # Logs
 *.log
 logs/
+# Local test files
+test_mongo.py
+
+# Environment example is safe to share
+!.env.example 
+# Large ML model files
+*.pth

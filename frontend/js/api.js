@@ -90,6 +90,13 @@ const API = {
     return this.request('/api/auth/me');
   },
 
+  updateProfile(payload) {
+    return this.request('/api/auth/profile', {
+      method: 'PUT',
+      body: payload
+    });
+  },
+
   logout() {
     this.setToken(null);
     localStorage.removeItem('krushisetu_user');
