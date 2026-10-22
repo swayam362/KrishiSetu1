@@ -41,21 +41,35 @@ class Database:
             self._mock_collections[col] = []
 
         try:
-            self._client = MongoClient(
-                Config.MONGO_URI,
-                serverSelectionTimeoutMS=2500,
-                connectTimeoutMS=2500
-            )
+            mongo_uri = Config.MONGO_URI
+
+            client_kwargs = {
+                "serverSelectionTimeoutMS": 8000,
+                "connectTimeoutMS": 8000
+            }
+
+            try:
+                import certifi
+                client_kwargs["tlsCAFile"] = certifi.where()
+            except ImportError:
+                pass
+
+            self._client = MongoClient(mongo_uri, **client_kwargs)
             # Test connection with ping
             self._client.admin.command('ping')
             self._db = self._client[Config.DB_NAME]
             self._is_connected = True
             self._create_indexes()
             logger.info("MongoDB connection established successfully.")
+            print("[DATABASE] Successfully connected to live MongoDB database.")
         except (ConnectionFailure, ServerSelectionTimeoutError, Exception) as e:
             self._is_connected = False
             self._db = None
-            logger.warning(f"MongoDB not reachable ({e}). Operating in resilient fallback mode.")
+            err_msg = str(e)
+            logger.warning(f"MongoDB not reachable ({err_msg}). Operating in resilient fallback mode.")
+            print(f"[DATABASE WARNING] MongoDB not connected ({err_msg[:120]}...).")
+            if "SSL" in err_msg or "TLS" in err_msg or "ServerSelectionTimeoutError" in err_msg:
+                print(" -> [ACTION NEEDED] In MongoDB Atlas: Go to 'Network Access' -> Add IP '0.0.0.0/0' (Allow access from anywhere).")
 
     def _create_indexes(self):
         """Create unique and search indexes for collections."""

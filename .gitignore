@@ -47,3 +47,5 @@ test_mongo.py
 !.env.example 
 # Large ML model files
 *.pth
+# Binaries
+*.exe
