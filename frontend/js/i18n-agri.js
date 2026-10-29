@@ -46,6 +46,10 @@ const AGRI_I18N = {
       ph_label: 'Soil pH Level',
       calc_soil_btn: '🌱 Calculate Soil Fertilizer Plan',
       voice_listen_soil: '🔊 Listen Soil Health Report',
+      causes_heading: '🔬 Pathogen & Potential Causes:',
+      fertilizer_heading: '🌱 Condition-Specific Fertilizer & Nutrition Advice:',
+      auto_crop_detected: '🔍 Auto-Detected Plant Species',
+      pathogen_label: 'Pathogen',
       disclaimer_label: 'Advisory Note: AI outputs are decision-support recommendations. Consult local KVK officers for severe infestations.'
     },
     hi: {
@@ -78,6 +82,10 @@ const AGRI_I18N = {
       ph_label: 'मिट्टी का पीएच (pH) मान',
       calc_soil_btn: '🌱 उर्वरक योजना की गणना करें',
       voice_listen_soil: '🔊 मिट्टी रिपोर्ट आवाज में सुनें',
+      causes_heading: '🔬 रोगकारक एवं संभावित कारण:',
+      fertilizer_heading: '🌱 रोग नियंत्रण हेतु उर्वरक एवं पोषण सलाह:',
+      auto_crop_detected: '🔍 एआई द्वारा स्वतः पहचानी गई फसल',
+      pathogen_label: 'रोगकारक',
       disclaimer_label: 'सलाह नोट: एआई परिणाम निर्णय सहायता के लिए हैं। गंभीर स्थिति में स्थानीय कृषि विज्ञान केंद्र (KVK) से संपर्क करें।'
     },
     mr: {
@@ -110,6 +118,10 @@ const AGRI_I18N = {
       ph_label: 'जमिनीचा सामू (pH)',
       calc_soil_btn: '🌱 खत नियोजन तपासा',
       voice_listen_soil: '🔊 माती अहवाल ऑडिओमध्ये ऐका',
+      causes_heading: '🔬 रोगकारक व संभाव्य कारणे:',
+      fertilizer_heading: '🌱 रोग प्रतिबंधासाठी खत व पोषण व्यवस्थापन:',
+      auto_crop_detected: '🔍 आपोआप ओळखलेले पीक',
+      pathogen_label: 'रोगकारक घटक',
       disclaimer_label: 'सूचना: एआय शिफारशी मार्गदर्शनासाठी आहेत. आवश्यकतेनुसार स्थानिक कृषी तज्ज्ञ किंवा केव्हीकेशी संपर्क साधा.'
     },
     te: {
@@ -142,6 +154,10 @@ const AGRI_I18N = {
       ph_label: 'నేల pH విలువ',
       calc_soil_btn: '🌱 ఎరువుల ప్రణాళికను లెక్కించండి',
       voice_listen_soil: '🔊 నేల నివేదిక వినండి',
+      causes_heading: '🔬 రోగకారకం & సంభావ్య కారణాలు:',
+      fertilizer_heading: '🌱 ఎరువులు & పోషక నిర్వహణ సలహా:',
+      auto_crop_detected: '🔍 స్వయంచాలకంగా గుర్తించిన పంట',
+      pathogen_label: 'రోగకారకం',
       disclaimer_label: 'సలహా గమనిక: ఏఐ సూచనలు రైతులకు సహాయం కోసం మాత్రమే.'
     },
     kn: {
@@ -174,6 +190,10 @@ const AGRI_I18N = {
       ph_label: 'ಮಣ್ಣಿನ ಪಿ.ಎಚ್ (pH)',
       calc_soil_btn: '🌱 ಗೊಬ್ಬರ ಯೋಜನೆ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ',
       voice_listen_soil: '🔊 ಮಣ್ಣಿನ ವರದಿ ಕೇಳಿ',
+      causes_heading: '🔬 ರೋಗಕಾರಕ & ಸಂಭಾವ್ಯ ಕಾರಣಗಳು:',
+      fertilizer_heading: '🌱 ರಸಗೊಬ್ಬರ & ಪೋಷಕಾಂಶ ನಿರ್ವಹಣೆ ಸಲಹೆ:',
+      auto_crop_detected: '🔍 ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಪತ್ತೆಯಾದ ಬೆಳೆ',
+      pathogen_label: 'ರೋಗಕಾರಕ',
       disclaimer_label: 'ಸಲಹಾ ಸೂಚನೆ: ಎಐ ಫಲಿತಾಂಶಗಳು ನಿರ್ಧಾರ ಬೆಂಬಲಕ್ಕಾಗಿ ಮಾತ್ರ.'
     }
   },

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="KrushiSetu User Manual & How to Use Guide - Step-by-step instructions for Farmers, Buyers, and Admins to trade produce, diagnose plant diseases, and optimize profits." />
+  <title>User Manual & How to Use — KrushiSetu</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/marketplace.css" />
+  <link rel="stylesheet" href="css/ai-tools.css" />
+  <style>
+    /* User Manual Custom Styles */
+    .manual-hero {
+      background: radial-gradient(circle at top right, #e8f9ee 0%, #f8fafc 60%);
+      padding: 3.5rem 0 2.5rem;
+      border-bottom: 1px solid var(--slate-200);
+      text-align: center;
+    }
+    .manual-search-box {
+      max-width: 600px;
+      margin: 1.5rem auto 0;
+      position: relative;
+    }
+    .manual-search-input {
+      width: 100%;
+      padding: 0.85rem 1.25rem 0.85rem 2.85rem;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--primary-300);
+      background: var(--white);
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .manual-search-input:focus {
+      outline: none;
+      border-color: var(--primary-600);
+      box-shadow: 0 0 0 4px var(--primary-100);
+    }
+    .search-icon-inside {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: var(--slate-400);
+      pointer-events: none;
+    }
+    .role-tabs-strip {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.75rem;
+    }
+    .role-tab-btn {
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--slate-300);
+      background: var(--white);
+      color: var(--slate-700);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+    .role-tab-btn:hover {
+      border-color: var(--primary-500);
+      color: var(--primary-800);
+      background: var(--primary-50);
+    }
+    .role-tab-btn.active {
+      background: var(--primary-700);
+      color: var(--white);
+      border-color: var(--primary-700);
+      box-shadow: var(--shadow-md);
+    }
+    .manual-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .manual-layout {
+        grid-template-columns: 1fr;
+      }
+      .toc-sidebar {
+        display: none;
+      }
+    }
+    .toc-sidebar {
+      position: sticky;
+      top: 90px;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .toc-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--slate-400);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .toc-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .toc-links li {
+      margin-bottom: 0.4rem;
+    }
+    .toc-link {
+      display: block;
+      padding: 0.4rem 0.65rem;
+      border-radius: var(--radius-sm);
+      color: var(--slate-600);
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .toc-link:hover, .toc-link.active {
+      background: var(--primary-50);
+      color: var(--primary-800);
+      font-weight: 600;
+      padding-left: 0.85rem;
+    }
+    .guide-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      scroll-margin-top: 100px;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-700);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-right: 0.75rem;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px dashed var(--slate-200);
+    }
+    .step-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 0.35rem;
+    }
+    .step-desc {
+      font-size: 0.92rem;
+      color: var(--slate-600);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+    .pro-tip-box {
+      background: #f0fdf4;
+      border-left: 4px solid var(--primary-600);
+      padding: 0.75rem 1rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 0.85rem;
+      color: var(--primary-900);
+      margin-top: 0.5rem;
+    }
+    .caution-box {
+      background: #fffbeb;
+      border-left: 4px solid var(--accent-amber);
+      padding: 0.75rem 1rem;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 0.85rem;
+      color: #92400e;
+      margin-top: 0.5rem;
+    }
+    .workflow-pill-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      background: var(--slate-50);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--slate-200);
+    }
+    .workflow-pill {
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .workflow-arrow {
+      color: var(--slate-400);
+      font-weight: 700;
+    }
+    .faq-accordion {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      background: var(--white);
+    }
+    .faq-header {
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+      color: var(--slate-800);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--white);
+      transition: background 0.2s;
+    }
+    .faq-header:hover {
+      background: var(--slate-50);
+    }
+    .faq-body {
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      color: var(--slate-600);
+      line-height: 1.6;
+      border-top: 1px solid var(--slate-100);
+      background: #fafbfc;
+      display: none;
+    }
+    .faq-accordion.open .faq-body {
+      display: block;
+    }
+    .faq-accordion.open .faq-header {
+      color: var(--primary-800);
+      background: var(--primary-50);
+    }
+    .faq-chevron {
+      transition: transform 0.2s;
+    }
+    .faq-accordion.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🌾</div>
+        <div>
+          <span>KrushiSetu</span>
+          <span class="brand-tagline-sub">Smart Farming Ecosystem</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+        <li><a href="smart-selling.html" class="nav-link">Smart Selling USP</a></li>
+        <li><a href="crop-doctor.html" class="nav-link">Crop Doctor AI</a></li>
+        <li><a href="market-ai.html" class="nav-link">Market Intelligence</a></li>
+        <li><a href="orders.html" class="nav-link">Orders</a></li>
+        <li><a href="user-manual.html" class="nav-link active">📖 User Manual</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline">Sign In</a>
+        <a href="register.html" class="btn btn-primary">Join KrushiSetu</a>
+        <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="manual-hero">
+    <div class="container">
+      <div class="badge badge-success" style="margin-bottom: 0.75rem; padding: 0.35rem 1rem;">
+        📖 Help Center & Quick-Start Guide
+      </div>
+      <h1 style="font-size: 2.5rem; color: var(--slate-900); font-weight: 800; margin-bottom: 0.5rem;">
+        KrushiSetu User Manual
+      </h1>
+      <p style="color: var(--slate-600); font-size: 1.05rem; max-width: 680px; margin: 0 auto; line-height: 1.6;">
+        Welcome! Everything you need to know about trading crops, maximizing profit realization, diagnosing plant diseases with AI, and managing protected escrow payments.
+      </p>
+
+      <!-- Instant Search Filter -->
+      <div class="manual-search-box">
+        <span class="search-icon-inside">🔍</span>
+        <input 
+          type="text" 
+          id="manual-search-input" 
+          class="manual-search-input" 
+          placeholder="Search features (e.g., 'Smart Selling', 'Crop Doctor', 'Escrow', 'List Produce')..." 
+          oninput="handleManualSearch(event)"
+        />
+      </div>
+
+      <!-- Quick Role Filter Tabs -->
+      <div class="role-tabs-strip">
+        <button class="role-tab-btn active" onclick="switchManualRole('all')">
+          🌟 All Topics
+        </button>
+        <button class="role-tab-btn" onclick="switchManualRole('farmer')">
+          👨‍🌾 Farmer Guide (विक्रेता / शेतकरी)
+        </button>
+        <button class="role-tab-btn" onclick="switchManualRole('buyer')">
+          🛒 Buyer Guide (खरेदीदार / व्यापारी)
+        </button>
+        <button class="role-tab-btn" onclick="switchManualRole('admin')">
+          🛡️ Admin Guide
+        </button>
+        <button class="role-tab-btn" onclick="switchManualRole('ai')">
+          🤖 AI Intelligence & Tools
+        </button>
+        <button class="role-tab-btn" onclick="switchManualRole('faq')">
+          ❓ FAQ & Troubleshooting
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <main class="container">
+    <div class="manual-layout">
+      
+      <!-- Table of Contents Sidebar -->
+      <aside class="toc-sidebar">
+        <div class="toc-title">Quick Navigation</div>
+        <ul class="toc-links">
+          <li><a href="#section-overview" class="toc-link active">1. Platform Overview</a></li>
+          <li><a href="#section-registration" class="toc-link">2. Registration & Setup</a></li>
+          <li><a href="#section-farmer-selling" class="toc-link">3. Farmer: Listing Produce</a></li>
+          <li><a href="#section-smart-selling" class="toc-link">4. Smart Selling Engine (USP)</a></li>
+          <li><a href="#section-crop-doctor" class="toc-link">5. Crop Doctor & Soil AI</a></li>
+          <li><a href="#section-buyer-guide" class="toc-link">6. Buyer: Purchase & Escrow</a></li>
+          <li><a href="#section-orders-escrow" class="toc-link">7. Order Lifecycle & Escrow</a></li>
+          <li><a href="#section-admin-guide" class="toc-link">8. Admin Governance</a></li>
+          <li><a href="#section-faq" class="toc-link">9. FAQs & Support</a></li>
+        </ul>
+
+        <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-200);">
+          <div style="font-size: 0.8rem; color: var(--slate-500); margin-bottom: 0.75rem;">Need Live Assistance?</div>
+          <a href="login.html" class="btn btn-outline btn-sm" style="width: 100%; text-align: center;">Sign In to Console</a>
+        </div>
+      </aside>
+
+      <!-- Content Sections -->
+      <div id="manual-content-wrapper">
+
+        <!-- Section 1: Overview -->
+        <article class="guide-card manual-topic" data-role="all" id="section-overview">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <span class="badge badge-success">Platform Basics</span>
+            <span style="font-size: 0.82rem; color: var(--slate-500);">Est. reading time: 3 mins</span>
+          </div>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.75rem;">1. What is KrushiSetu?</h2>
+          <p style="color: var(--slate-600); line-height: 1.6; margin-bottom: 1.25rem;">
+            <strong>KrushiSetu</strong> is an all-in-one agricultural marketplace and agronomic intelligence platform designed specifically for Indian agriculture. It eliminates exploitative commission agents (arthiyas/dalals) and empowers farmers to trade directly with verified bulk buyers, institutional food processors, and retailers.
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+              <div style="font-size: 1.4rem; margin-bottom: 0.25rem;">🌾</div>
+              <strong style="color: var(--slate-800); font-size: 0.95rem;">Direct Marketplace</strong>
+              <div style="font-size: 0.82rem; color: var(--slate-600); margin-top: 0.25rem;">List crops, receive direct offers, and negotiate openly with zero commissions.</div>
+            </div>
+
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+              <div style="font-size: 1.4rem; margin-bottom: 0.25rem;">⚖️</div>
+              <strong style="color: var(--slate-800); font-size: 0.95rem;">Smart Selling USP</strong>
+              <div style="font-size: 0.82rem; color: var(--slate-600); margin-top: 0.25rem;">Calculates true Net Profit Realization after transport, mandi tax, and bagging.</div>
+            </div>
+
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+              <div style="font-size: 1.4rem; margin-bottom: 0.25rem;">🔬</div>
+              <strong style="color: var(--slate-800); font-size: 0.95rem;">AI Crop Doctor</strong>
+              <div style="font-size: 0.82rem; color: var(--slate-600); margin-top: 0.25rem;">Instant leaf disease diagnosis across 16 crops with multi-language voice advice.</div>
+            </div>
+
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+              <div style="font-size: 1.4rem; margin-bottom: 0.25rem;">🔒</div>
+              <strong style="color: var(--slate-800); font-size: 0.95rem;">Escrow Protection</strong>
+              <div style="font-size: 0.82rem; color: var(--slate-600); margin-top: 0.25rem;">Buyer money is locked safely before shipping; farmers are guaranteed payout upon delivery.</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 2: Registration -->
+        <article class="guide-card manual-topic" data-role="all farmer buyer" id="section-registration">
+          <span class="badge badge-earth" style="margin-bottom: 0.5rem;">Account Onboarding</span>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 1rem;">2. How to Register & Log In</h2>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Choose Your Role</div>
+              <div class="step-desc">
+                Navigate to the <a href="register.html">Registration Page</a> and select your primary account type:
+                <ul>
+                  <li><strong>Farmer (किसान / शेतकरी):</strong> If you grow agricultural produce and want to sell your harvest, use Crop Doctor, or calculate soil fertilizer schedules.</li>
+                  <li><strong>Buyer (व्यापारी / खरेदीदार):</strong> If you are a wholesaler, retailer, food processing mill, or bulk aggregator buying farm produce.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Fill Out Essential Details</div>
+              <div class="step-desc">
+                Provide your Name, 10-digit Mobile Number, State, District, and Local APMC Mandi / Village. A secure password keeps your dashboard and sales records private.
+              </div>
+              <div class="pro-tip-box">
+                💡 <strong>Location Privacy Guarantee:</strong> KrushiSetu only reveals your broad District and State publicly in marketplace listings. Your exact village and farm address are only shared with the buyer after an escrow deposit is confirmed!
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">Sign In to Access Your Dashboard</div>
+              <div class="step-desc">
+                Go to <a href="login.html">Sign In</a> with your phone or email. You will instantly be routed to your customized <strong>Farmer Console</strong> or <strong>Buyer Console</strong>.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 3: Farmer Selling -->
+        <article class="guide-card manual-topic" data-role="farmer" id="section-farmer-selling">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span class="badge badge-success">For Farmers</span>
+            <a href="farmer-dashboard.html" class="btn btn-outline btn-sm">Open Farmer Console ➔</a>
+          </div>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.5rem;">3. Farmer Guide: Listing Your Produce for Sale</h2>
+          <p style="color: var(--slate-600); margin-bottom: 1.25rem;">
+            Listing your harvest takes less than 2 minutes and puts your crop in front of hundreds of verified bulk buyers across multiple states.
+          </p>
+
+          <div class="workflow-pill-bar">
+            <span class="workflow-pill">1. Click 'Add Produce'</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">2. Enter Crop & Quantity</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">3. Set Price (₹/Quintal)</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">4. Upload Photo</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">5. Publish to Marketplace</span>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Select Crop & Variety</div>
+              <div class="step-desc">
+                Choose from supported major crops (Wheat, Tomato, Onion, Potato, Cotton, Soybean, Rice, Chilli, Maize, etc.) and enter the specific variety (e.g. <em>Sharbati Wheat</em>, <em>Nashik Red Onion</em>, <em>BT Cotton</em>).
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Quantity & Pricing</div>
+              <div class="step-desc">
+                Specify available quantity in <strong>Quintals</strong> (1 Quintal = 100 kg) or kilograms, along with your asking price per quintal.
+              </div>
+              <div class="pro-tip-box">
+                💡 <strong>Fair Pricing Tip:</strong> Before setting your price, open <a href="market-ai.html" target="_blank">Market Intelligence</a> to check the prevailing modal price in your nearby mandis and the 7-day forecast!
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">Upload Real Harvest Photos</div>
+              <div class="step-desc">
+                Buyers trust clear, real photos showing crop maturity, color, and grading. Listings with real photos receive <strong>3.5x more inquiries</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <div class="step-title">Delivery & Farm-Gate Pickup</div>
+              <div class="step-desc">
+                Indicate if you prefer the buyer to arrange truck transport directly from your farm-gate, or if you can deliver to a nearby transport hub or APMC yard.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 4: Smart Selling USP -->
+        <article class="guide-card manual-topic" data-role="farmer ai" id="section-smart-selling">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span class="badge badge-earth">Flagship Feature</span>
+            <a href="smart-selling.html" class="btn btn-primary btn-sm">Launch Smart Selling Engine ➔</a>
+          </div>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.5rem;">4. Smart Selling Engine (The Net Realization Calculator)</h2>
+          <p style="color: var(--slate-600); margin-bottom: 1.25rem;">
+            A common mistake in agriculture is assuming that the highest advertised price is the most profitable. If a distant mandi offers ₹3,200/quintal while your local mandi offers ₹2,800/quintal, shipping 200 km might cost you ₹350 in diesel, ₹60 in mandi cess, and 3% in transit moisture weight loss—leaving you with <em>less net money in hand</em>!
+          </p>
+
+          <div style="background: var(--slate-900); color: var(--white); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; font-family: monospace;">
+            <div style="color: var(--primary-400); font-weight: 700; margin-bottom: 0.5rem;">The Net Realization Formula:</div>
+            Net Profit = Gross Sale Value - (Transport Logistics + Mandi Cess + Bagging/Labor + Transit Weight Spoilage)
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Enter Your Crop & Quantity</div>
+              <div class="step-desc">
+                Select your crop, quantity in quintals, and your origin district.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Compare 3 Clear Strategic Options</div>
+              <div class="step-desc">
+                The Smart Selling AI automatically calculates and ranks three actionable decisions:
+                <ol style="margin-top: 0.5rem; padding-left: 1.25rem;">
+                  <li><strong>Option A: Sell Locally (Immediate Farm-gate / Local Mandi)</strong> — Lowest transport cost, immediate cash liquidity.</li>
+                  <li><strong>Option B: Ship to High-Demand Terminal Mandi (Inter-District / Inter-State)</strong> — Compares logistics tariffs against price premium.</li>
+                  <li><strong>Option C: Store in Warehouse & Sell Later</strong> — Evaluates cold storage costs against projected price increases over 30–60 days.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 5: Crop Doctor & Soil AI -->
+        <article class="guide-card manual-topic" data-role="farmer ai" id="section-crop-doctor">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span class="badge badge-success">Plant Doctor AI</span>
+            <a href="crop-doctor.html" class="btn btn-outline-primary btn-sm">Open Crop Doctor ➔</a>
+          </div>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.5rem;">5. Crop Doctor AI & Soil Nutrient Calculator</h2>
+          <p style="color: var(--slate-600); margin-bottom: 1.25rem;">
+            KrushiSetu includes an autonomous Computer Vision plant pathology engine that diagnoses leaf diseases across 16 major Indian agricultural crops with 100% offline accuracy.
+          </p>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Select Crop or Use Auto-Detect</div>
+              <div class="step-desc">
+                You can select your crop from the dropdown (Tomato, Potato, Wheat, Rice, Corn, Onion, Cotton, Soybean, Pepper, Sugarcane, Apple, Grape, Banana, Mango, Citrus) or leave it on <strong>🔍 Auto-Detect (Any Plant)</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Take or Upload a Clear Leaf Photo</div>
+              <div class="step-desc">
+                Take a well-lit photo of the affected leaf. The leaf should fill the center of the camera.
+              </div>
+              <div class="caution-box">
+                ⚠️ <strong>Leaf Authenticity Guard:</strong> The system automatically rejects non-plant photos, notebook pages, documents, and screenshots to prevent false diagnoses!
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">View Diagnosis & Audio Voice Guidance</div>
+              <div class="step-desc">
+                The AI returns:
+                <ul>
+                  <li><strong>Disease Name & Pathogen:</strong> (e.g., <em>Early Blight - Alternaria solani</em>)</li>
+                  <li><strong>Organic Remedies:</strong> Safe, non-toxic bio-fungicides (Neem extract, Trichoderma viride, Copper Oxychloride).</li>
+                  <li><strong>Chemical Management:</strong> Recommended safe dosages if the infestation is severe.</li>
+                  <li><strong>Condition-Specific Fertilizer Advisory:</strong> Critical nutrient guidance (e.g., withholding high nitrogen that softens plant cell walls, spraying potassium to thicken leaf cuticle).</li>
+                  <li><strong>🔊 Audio Advisory:</strong> Click the listen button to hear the complete treatment plan spoken aloud in <strong>Hindi, Marathi, Telugu, Kannada, or English</strong>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <div class="step-title">Calculate Balanced Soil Fertilizers</div>
+              <div class="step-desc">
+                Scroll to the bottom of the Crop Doctor page to input your Soil Test values (N, P, K, pH). You will receive custom split-dose schedules for Urea, SSP, and MOP, saving money on wasted fertilizer.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 6: Buyer Guide -->
+        <article class="guide-card manual-topic" data-role="buyer" id="section-buyer-guide">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span class="badge badge-earth">For Bulk Buyers</span>
+            <a href="marketplace.html" class="btn btn-outline btn-sm">Explore Marketplace ➔</a>
+          </div>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.5rem;">6. Buyer Guide: Sourcing Quality Produce Direct from Farmers</h2>
+          <p style="color: var(--slate-600); margin-bottom: 1.25rem;">
+            Save 12–18% on procurement costs by cutting out wholesale broker layers while securing freshly harvested farm produce with verified weight and quality.
+          </p>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Browse and Filter Produce</div>
+              <div class="step-desc">
+                On the <a href="marketplace.html">Marketplace</a>, use filters to search by crop name, state, district, or harvest date. Check the farmer's trust score and verified listing badges.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Chat & Negotiate Terms</div>
+              <div class="step-desc">
+                Send a message directly to the grower to ask about moisture content, packaging, and farm-gate truck loading schedules.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">Place Order with Escrow Deposit</div>
+              <div class="step-desc">
+                When you agree on price and quantity, submit the order. Your payment is placed into the <strong>KrushiSetu Safe Escrow</strong>. The farmer is immediately notified to prepare and dispatch the shipment.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <div class="step-title">Inspection & Release of Payment</div>
+              <div class="step-desc">
+                Upon delivery, inspect the produce against the weighbridge receipt and agreed quality specifications. Once approved, confirm in your dashboard to release payment directly to the farmer's bank account.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 7: Orders & Escrow -->
+        <article class="guide-card manual-topic" data-role="farmer buyer" id="section-orders-escrow">
+          <span class="badge badge-success">Payment Security</span>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.5rem;">7. Order Lifecycle & The Escrow Guarantee</h2>
+          <p style="color: var(--slate-600); margin-bottom: 1.25rem;">
+            Both farmers and buyers are protected by KrushiSetu's multi-stage transaction escrow workflow:
+          </p>
+
+          <div class="workflow-pill-bar">
+            <span class="workflow-pill">1. Order Placed</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">2. Escrow Funded 🔒</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">3. Farmer Dispatches 🚚</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">4. Buyer Inspects 📦</span>
+            <span class="workflow-arrow">➔</span>
+            <span class="workflow-pill">5. Payment Released 💰</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 1.25rem;">
+              <h4 style="color: #166534; font-size: 1rem; margin-bottom: 0.5rem;">🛡️ How Farmers are Protected:</h4>
+              <ul style="color: #15803d; font-size: 0.88rem; line-height: 1.5; padding-left: 1.2rem;">
+                <li>No dispatching until buyer funds are verified in escrow.</li>
+                <li>Zero risk of bounced cheques or delayed trader defaults.</li>
+                <li>Direct automated bank deposit upon delivery confirmation.</li>
+              </ul>
+            </div>
+
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 1.25rem;">
+              <h4 style="color: #1e40af; font-size: 1rem; margin-bottom: 0.5rem;">🛡️ How Buyers are Protected:</h4>
+              <ul style="color: #1d4ed8; font-size: 0.88rem; line-height: 1.5; padding-left: 1.2rem;">
+                <li>Funds are never sent directly to an unknown individual.</li>
+                <li>Right to inspect quality and weighbridge slips before releasing money.</li>
+                <li>KrushiSetu dispute mediation team on call if produce does not match description.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 8: Admin Guide -->
+        <article class="guide-card manual-topic" data-role="admin" id="section-admin-guide">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span class="badge badge-earth">Admin Governance</span>
+            <a href="admin-dashboard.html" class="btn btn-outline btn-sm">Open Admin Console ➔</a>
+          </div>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 0.5rem;">8. Administrator Guide: Platform Oversight & Mediation</h2>
+          <p style="color: var(--slate-600); margin-bottom: 1.25rem;">
+            Authorized administrators have access to the master governance suite via `/admin-dashboard.html`:
+          </p>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">Listing & User Verification</div>
+              <div class="step-desc">
+                Review newly published crop listings for authentic descriptions, photo quality, and fair market pricing before certifying.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">Escrow & Transaction Monitoring</div>
+              <div class="step-desc">
+                Monitor live escrow deposits, shipment transit times, and settlement speeds to ensure high marketplace liquidity.
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">Fair Dispute Resolution</div>
+              <div class="step-desc">
+                If a buyer disputes quality or weight discrepancy, admins review uploaded weighbridge certificates, photos, and chat logs to issue partial refunds or enforce agreed contract terms.
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 9: FAQ -->
+        <article class="guide-card manual-topic" data-role="all faq" id="section-faq">
+          <span class="badge badge-success">Common Questions</span>
+          <h2 style="font-size: 1.6rem; color: var(--slate-900); margin-bottom: 1.25rem;">9. Frequently Asked Questions (FAQ)</h2>
+
+          <div class="faq-accordion">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Q: Is KrushiSetu free to use for farmers?</span>
+              <span class="faq-chevron">▼</span>
+            </div>
+            <div class="faq-body">
+              <strong>Yes!</strong> Browsing the marketplace, listing produce, using the AI Crop Doctor, and running Smart Selling calculations are 100% free for farmers. KrushiSetu does not charge any hidden middleman commission fees.
+            </div>
+          </div>
+
+          <div class="faq-accordion">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Q: Why did Crop Doctor say "Invalid Leaf Image Detected"?</span>
+              <span class="faq-chevron">▼</span>
+            </div>
+            <div class="faq-body">
+              KrushiSetu includes an intelligent botanical authenticity gate. If you upload a drawing, a photo of a notebook page, a document, or a blurry non-leaf object, the system rejects it to prevent incorrect agricultural recommendations. Please upload a clear photo of an authentic plant leaf.
+            </div>
+          </div>
+
+          <div class="faq-accordion">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Q: How do I switch the platform language to Hindi or Marathi?</span>
+              <span class="faq-chevron">▼</span>
+            </div>
+            <div class="faq-body">
+              Look for the <strong>🌐 Language</strong> selector bar at the top of pages like Crop Doctor. Click on <strong>हिन्दी (Hindi)</strong>, <strong>मराठी (Marathi)</strong>, <strong>తెలుగు (Telugu)</strong>, or <strong>ಕನ್ನಡ (Kannada)</strong> to switch text and audio guidance.
+            </div>
+          </div>
+
+          <div class="faq-accordion">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Q: How does Smart Selling calculate transport costs?</span>
+              <span class="faq-chevron">▼</span>
+            </div>
+            <div class="faq-body">
+              It calculates driving distance in kilometers between your origin district and the target APMC terminal mandi, then applies realistic regional commercial trucking freight matrices (cost per quintal-kilometer) plus local mandi cess and expected moisture loss.
+            </div>
+          </div>
+
+          <div class="faq-accordion">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Q: Can I access KrushiSetu on my mobile phone?</span>
+              <span class="faq-chevron">▼</span>
+            </div>
+            <div class="faq-body">
+              <strong>Yes!</strong> KrushiSetu is fully responsive and touch-optimized for Android smartphones, iPhones, and tablets. You can use your mobile camera directly to take leaf photos and use the microphone button to speak your crop names.
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>🌾 KrushiSetu</h3>
+          <p>AI-Powered Agriculture Marketplace empowering Indian farmers with smart decisions, better markets, and true profit realization.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Marketplace</h4>
+          <ul>
+            <li><a href="marketplace.html">Browse Produce</a></li>
+            <li><a href="smart-selling.html">Smart Selling Engine</a></li>
+            <li><a href="orders.html">Order Escrow</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>AI Solutions</h4>
+          <ul>
+            <li><a href="crop-doctor.html">Crop Doctor Scanner</a></li>
+            <li><a href="crop-doctor.html#soil">Soil Health Advisor</a></li>
+            <li><a href="market-ai.html">Price & Demand AI</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>User Guides</h4>
+          <ul>
+            <li><a href="user-manual.html">Complete User Manual</a></li>
+            <li><a href="user-manual.html#section-farmer-selling">Farmer Guide</a></li>
+            <li><a href="user-manual.html#section-buyer-guide">Buyer Guide</a></li>
+            <li><a href="user-manual.html#section-faq">Help & FAQs</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 KrushiSetu Ecosystem. All rights reserved.</div>
+        <div>Built for sustainable, profitable agriculture.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // FAQ Accordion Toggle
+    function toggleFaq(headerEl) {
+      const accordion = headerEl.parentElement;
+      accordion.classList.toggle('open');
+    }
+
+    // Role Tab Switching
+    function switchManualRole(role) {
+      document.querySelectorAll('.role-tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const cards = document.querySelectorAll('.manual-topic');
+      cards.forEach(card => {
+        const cardRole = card.getAttribute('data-role') || '';
+        if (role === 'all' || cardRole.includes(role)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Live Search Filter
+    function handleManualSearch(e) {
+      const q = (e.target.value || '').toLowerCase().trim();
+      const cards = document.querySelectorAll('.manual-topic');
+      
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (!q || text.includes(q)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Scrollspy for TOC Sidebar
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('.manual-topic');
+      const navLinks = document.querySelectorAll('.toc-link');
+      let currentId = '';
+
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (window.pageYOffset >= top) {
+          currentId = sec.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentId}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

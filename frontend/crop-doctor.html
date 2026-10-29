@@ -27,6 +27,7 @@
         <li><a href="crop-doctor.html" class="nav-link active">Crop Doctor</a></li>
         <li><a href="market-ai.html" class="nav-link">Market Intelligence</a></li>
         <li><a href="orders.html" class="nav-link">Orders</a></li>
+        <li><a href="user-manual.html" class="nav-link">How to Use</a></li>
       </ul>
 
       <div class="nav-actions">
@@ -83,12 +84,22 @@
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             <label for="select-scan-crop" style="font-size: 0.85rem; font-weight: 600; color: var(--slate-700);">Crop:</label>
             <select id="select-scan-crop" class="form-select" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; width: auto;" onchange="onScanCropChange()">
-              <option value="Tomato">Tomato (टमाटर / टोमॅटो)</option>
-              <option value="Wheat">Wheat (गेहूं / गहू)</option>
-              <option value="Onion">Onion (प्याज / कांदा)</option>
-              <option value="Rice">Rice / Paddy (धान / भात)</option>
-              <option value="Cotton">Cotton (कपास / कापूस)</option>
-              <option value="Soybean">Soybean (सोयाबीन)</option>
+              <option value="Auto">🔍 Auto-Detect (Any Plant)</option>
+              <option value="Tomato">🍅 Tomato (टमाटर / टोमॅटो)</option>
+              <option value="Potato">🥔 Potato (आलू / बटाटा)</option>
+              <option value="Wheat">🌾 Wheat (गेहूं / गहू)</option>
+              <option value="Rice">🌾 Rice / Paddy (धान / भात)</option>
+              <option value="Corn">🌽 Corn / Maize (मक्का)</option>
+              <option value="Onion">🧅 Onion (प्याज / कांदा)</option>
+              <option value="Cotton">🏵️ Cotton (कपास / कापूस)</option>
+              <option value="Soybean">🫘 Soybean (सोयाबीन)</option>
+              <option value="Pepper">🫑 Bell Pepper / Chilli (मिर्च)</option>
+              <option value="Sugarcane">🎋 Sugarcane (गन्ना / ऊस)</option>
+              <option value="Apple">🍎 Apple (सेब)</option>
+              <option value="Grape">🍇 Grape (अंगूर / द्राक्ष)</option>
+              <option value="Banana">🍌 Banana (केला / केळी)</option>
+              <option value="Mango">🥭 Mango (आम / आंबा)</option>
+              <option value="Citrus">🍋 Citrus / Lemon (नींबू / लिंबू)</option>
             </select>
           </div>
 
@@ -121,12 +132,15 @@
           <div class="form-group">
             <label class="form-label" data-i18n="target_crop_label">Target Crop</label>
             <select class="form-select" id="soil-crop">
-              <option value="Wheat">Wheat (गेहूं / गहू)</option>
-              <option value="Onion">Onion (प्याज / कांदा)</option>
-              <option value="Soybean">Soybean (सोयाबीन)</option>
-              <option value="Tomato">Tomato (टमाटर / टोमॅटो)</option>
-              <option value="Rice">Paddy / Rice (धान / भात)</option>
-              <option value="Cotton">Cotton (कपास / कापूस)</option>
+              <option value="Wheat">🌾 Wheat (गेहूं / गहू)</option>
+              <option value="Rice">🌾 Paddy / Rice (धान / भात)</option>
+              <option value="Tomato">🍅 Tomato (टमाटर / टोमॅटो)</option>
+              <option value="Potato">🥔 Potato (आलू / बटाटा)</option>
+              <option value="Onion">🧅 Onion (प्याज / कांदा)</option>
+              <option value="Corn">🌽 Corn / Maize (मक्का)</option>
+              <option value="Cotton">🏵️ Cotton (कपास / कापूस)</option>
+              <option value="Soybean">🫘 Soybean (सोयाबीन)</option>
+              <option value="Sugarcane">🎋 Sugarcane (गन्ना / ऊस)</option>
             </select>
           </div>
 

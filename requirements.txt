@@ -1,4 +1,9 @@
-# KrushiSetu Core Dependencies
+# ================================================
+# KrushiSetu - Python Dependencies
+# Install: pip install -r requirements.txt
+# ================================================
+
+# Flask Backend
 flask>=2.3.0
 flask-cors>=4.0.0
 pymongo>=4.5.0
@@ -18,6 +23,11 @@ pandas>=2.0.0
 scikit-learn>=1.3.0
 xgboost>=1.7.0
 Pillow>=10.0.0
+
+# Deep Learning (Plant Disease Detection)
+# Install CPU-only PyTorch: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+torch>=2.0.0
+torchvision>=0.15.0
 
 # Optional / Testing
 requests>=2.31.0

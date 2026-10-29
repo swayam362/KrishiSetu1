@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#167a48" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="wheatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#15803d" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#84cc16" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Agricultural Contour Furrows -->
+    <path d="M 0 65 Q 70 50 140 65 T 280 65" stroke="rgba(22, 101, 52, 0.035)" stroke-width="1.2" stroke-dasharray="4,6"/>
+    <path d="M 0 215 Q 70 200 140 215 T 280 215" stroke="rgba(22, 101, 52, 0.035)" stroke-width="1.2" stroke-dasharray="4,6"/>
+
+    <!-- Wheat Plant (Left Area) -->
+    <!-- Wheat Stalk -->
+    <path d="M 45 255 Q 52 185 58 115" stroke="rgba(22, 101, 52, 0.09)" stroke-width="1.8"/>
+    <!-- Wheat Kernels & Awns Left -->
+    <path d="M 56 182 Q 41 172 44 158 Q 53 166 57 177" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.9"/>
+    <path d="M 44 158 Q 30 137 26 118" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    
+    <path d="M 58 147 Q 43 137 46 123 Q 55 131 59 142" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.9"/>
+    <path d="M 46 123 Q 32 102 28 83" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+
+    <!-- Wheat Kernels & Awns Right -->
+    <path d="M 58 170 Q 73 160 70 146 Q 61 154 57 165" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.9"/>
+    <path d="M 70 146 Q 84 125 88 106" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+
+    <path d="M 59 135 Q 74 125 71 111 Q 62 119 58 130" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.9"/>
+    <path d="M 71 111 Q 85 90 89 71" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+
+    <!-- Wheat Apex -->
+    <path d="M 58 115 Q 50 100 58 87 Q 66 100 58 115" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.9"/>
+    <path d="M 58 87 Q 58 70 58 52" stroke="rgba(22, 101, 52, 0.08)" stroke-width="0.8"/>
+
+    <!-- Rice Panicle (Right Area) -->
+    <!-- Main Arching Stem -->
+    <path d="M 205 260 Q 192 180 220 118 Q 232 90 254 78" stroke="rgba(22, 101, 52, 0.08)" stroke-width="1.6"/>
+    <!-- Rice Grains Branch 1 -->
+    <path d="M 214 145 Q 224 154 227 168" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    <ellipse cx="228" cy="172" rx="3.5" ry="5.5" transform="rotate(20 228 172)" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.7"/>
+
+    <!-- Rice Grains Branch 2 -->
+    <path d="M 224 122 Q 238 128 244 142" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    <ellipse cx="245" cy="146" rx="3.5" ry="5.5" transform="rotate(35 245 146)" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.7"/>
+
+    <!-- Rice Grains Branch 3 -->
+    <path d="M 235 98 Q 252 101 260 114" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    <ellipse cx="261" cy="117" rx="3.5" ry="5.5" transform="rotate(45 261 117)" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.7"/>
+
+    <!-- Rice Terminal Grain -->
+    <ellipse cx="256" cy="76" rx="3" ry="5" transform="rotate(65 256 76)" fill="url(#wheatGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="0.7"/>
+
+    <!-- Green Leaves & Foliage (Center Area) -->
+    <!-- Left Leaf Blade -->
+    <path d="M 140 195 C 116 182 102 154 108 130 C 128 136 138 164 140 195 Z" fill="url(#leafGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="1"/>
+    <!-- Left Leaf Midrib & Veins -->
+    <path d="M 140 195 Q 124 162 108 130" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    <path d="M 128 168 Q 118 165 112 155" stroke="rgba(22, 101, 52, 0.05)" stroke-width="0.6"/>
+    <path d="M 134 182 Q 125 178 120 170" stroke="rgba(22, 101, 52, 0.05)" stroke-width="0.6"/>
+
+    <!-- Right Leaf Blade -->
+    <path d="M 140 195 C 125 162 142 128 170 120 C 176 148 160 180 140 195 Z" fill="url(#leafGrad)" stroke="rgba(22, 101, 52, 0.09)" stroke-width="1"/>
+    <!-- Right Leaf Midrib & Veins -->
+    <path d="M 140 195 Q 153 158 170 120" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    <path d="M 150 168 Q 160 162 165 152" stroke="rgba(22, 101, 52, 0.05)" stroke-width="0.6"/>
+    <path d="M 144 182 Q 152 176 158 168" stroke="rgba(22, 101, 52, 0.05)" stroke-width="0.6"/>
+
+    <!-- Delicate Farm Sprout Accent (Top Left) -->
+    <path d="M 10 35 C 18 20 30 18 36 28 C 28 32 20 35 10 35 Z" fill="url(#leafGrad)" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+    <path d="M 10 35 C 5 22 12 12 24 12 C 22 22 18 30 10 35 Z" fill="url(#leafGrad)" stroke="rgba(22, 101, 52, 0.07)" stroke-width="0.8"/>
+
+    <!-- Subtle Floating Leaflet (Bottom Right) -->
+    <path d="M 245 235 C 255 222 268 220 274 230 C 265 234 255 236 245 235 Z" fill="url(#leafGrad)" stroke="rgba(22, 101, 52, 0.06)" stroke-width="0.8"/>
+  </g>
+</svg>

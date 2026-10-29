@@ -83,18 +83,39 @@ function toggleVoiceInput() {
     (transcript) => {
       console.log('Voice recognized:', transcript);
       const lower = transcript.toLowerCase();
-      
-      const cropSelect = document.getElementById('select-scan-crop');
+        const cropSelect = document.getElementById('select-scan-crop');
       if (lower.includes('tomato') || lower.includes('टमाटर') || lower.includes('टोमॅटो') || lower.includes('టమాట') || lower.includes('ಟೊಮೆಟೊ')) {
         if (cropSelect) cropSelect.value = 'Tomato';
+      } else if (lower.includes('potato') || lower.includes('आलू') || lower.includes('बटाटा') || lower.includes('బంగాళాదుంప') || lower.includes('ಆಲೂಗಡ್ಡೆ')) {
+        if (cropSelect) cropSelect.value = 'Potato';
       } else if (lower.includes('wheat') || lower.includes('गेहूं') || lower.includes('गहू') || lower.includes('గోధుమ') || lower.includes('ಗೋಧಿ')) {
         if (cropSelect) cropSelect.value = 'Wheat';
-      } else if (lower.includes('onion') || lower.includes('प्याज') || lower.includes('कांदा') || lower.includes('ఉల్లి') || lower.includes('ಈರುಳ್ಳಿ')) {
-        if (cropSelect) cropSelect.value = 'Onion';
       } else if (lower.includes('rice') || lower.includes('paddy') || lower.includes('धान') || lower.includes('भात') || lower.includes('వరి') || lower.includes('ಭತ್ತ')) {
         if (cropSelect) cropSelect.value = 'Rice';
+      } else if (lower.includes('corn') || lower.includes('maize') || lower.includes('मक्का') || lower.includes('मका') || lower.includes('మొక్కజొన్న') || lower.includes('ಮೆಕ್ಕೆಜೋಳ')) {
+        if (cropSelect) cropSelect.value = 'Corn';
+      } else if (lower.includes('onion') || lower.includes('प्याज') || lower.includes('कांदा') || lower.includes('ఉల్లి') || lower.includes('ಈರುಳ್ಳಿ')) {
+        if (cropSelect) cropSelect.value = 'Onion';
       } else if (lower.includes('cotton') || lower.includes('कपास') || lower.includes('कापूस') || lower.includes('పత్తి') || lower.includes('ಹತ್ತಿ')) {
         if (cropSelect) cropSelect.value = 'Cotton';
+      } else if (lower.includes('soybean') || lower.includes('सोयाबीन') || lower.includes('సోయాబీన్') || lower.includes('ಸೋಯಾಬೀನ್')) {
+        if (cropSelect) cropSelect.value = 'Soybean';
+      } else if (lower.includes('pepper') || lower.includes('chilli') || lower.includes('capsicum') || lower.includes('मिर्च') || lower.includes('मिरची') || lower.includes('మిరప') || lower.includes('ಮೆಣಸಿನಕಾಯಿ')) {
+        if (cropSelect) cropSelect.value = 'Pepper';
+      } else if (lower.includes('sugarcane') || lower.includes('गन्ना') || lower.includes('ऊस') || lower.includes('చెరకు') || lower.includes('ಕಬ್ಬು')) {
+        if (cropSelect) cropSelect.value = 'Sugarcane';
+      } else if (lower.includes('apple') || lower.includes('सेब') || lower.includes('सफरचंद') || lower.includes('ఆపిల్') || lower.includes('ಸೇಬು')) {
+        if (cropSelect) cropSelect.value = 'Apple';
+      } else if (lower.includes('grape') || lower.includes('अंगूर') || lower.includes('द्राक्ष') || lower.includes('द्राक्षे') || lower.includes('ద్రాక్ష') || lower.includes('ದ್ರಾಕ್ಷಿ')) {
+        if (cropSelect) cropSelect.value = 'Grape';
+      } else if (lower.includes('banana') || lower.includes('केला') || lower.includes('केळी') || lower.includes('అరటి') || lower.includes('ಬಾಳೆಹಣ್ಣು')) {
+        if (cropSelect) cropSelect.value = 'Banana';
+      } else if (lower.includes('mango') || lower.includes('आम') || lower.includes('आंबा') || lower.includes('మామిడి') || lower.includes('ಮಾವಿನಹಣ್ಣು')) {
+        if (cropSelect) cropSelect.value = 'Mango';
+      } else if (lower.includes('citrus') || lower.includes('lemon') || lower.includes('नींबू') || lower.includes('लिंबू') || lower.includes('నిమ్మ') || lower.includes('ನಿಂಬೆ')) {
+        if (cropSelect) cropSelect.value = 'Citrus';
+      } else if (lower.includes('auto') || lower.includes('detect') || lower.includes('ऑटो') || lower.includes('कोणतेही') || lower.includes('అన్ని') || lower.includes('ಎಲ್ಲಾ')) {
+        if (cropSelect) cropSelect.value = 'Auto';
       } else if (lower.includes('soybean') || lower.includes('सोयाबीन') || lower.includes('సోయాబీన్') || lower.includes('ಸೋಯಾಬೀನ್')) {
         if (cropSelect) cropSelect.value = 'Soybean';
       }
@@ -274,11 +295,18 @@ function renderDiagnosis(diag) {
 
   const currentLang = (typeof AGRI_I18N !== 'undefined' && AGRI_I18N.currentLang) ? AGRI_I18N.currentLang : 'en';
   let diseaseName = diag.disease_name || 'Plant Leaf Analysis';
+  let cropDisplay = diag.crop || 'Crop';
+  let scientificCrop = diag.scientific_crop || '';
+  let pathogen = diag.pathogen || '';
   let severity = diag.severity || 'Moderate';
   let symptoms = diag.symptoms || [];
+  let possibleCauses = diag.possible_causes || [];
   let organicRemedies = diag.organic_remedies || [];
   let chemicalRemedies = diag.chemical_management || diag.chemical_remedies || [];
   let prevention = diag.prevention || '';
+  let fertilizerAdvice = diag.fertilizer_recommendations || '';
+  let modelMode = diag.model_mode || '';
+  let isAuto = diag.is_auto_detected || false;
   let speechText = diag.speech_text || `${diseaseName}. Recommended treatment: ${organicRemedies[0] || 'Spray bio-fungicide.'}`;
 
   // Check if translation exists for current language
@@ -290,6 +318,7 @@ function renderDiagnosis(diag) {
     if (t.organic_remedies && t.organic_remedies.length > 0) organicRemedies = t.organic_remedies;
     if (t.chemical_management && t.chemical_management.length > 0) chemicalRemedies = t.chemical_management;
     if (t.prevention) prevention = t.prevention;
+    if (t.fertilizer_recommendations) fertilizerAdvice = t.fertilizer_recommendations;
     if (t.speech_text) speechText = t.speech_text;
   }
 
@@ -310,10 +339,23 @@ function renderDiagnosis(diag) {
   card.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
       <div>
-        <span class="badge ${isHealthy ? 'badge-success' : 'badge-warning'}" style="margin-bottom: 0.25rem;">
-          ${isHealthy ? '✅ Healthy Plant' : '⚠️ ' + (typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('diagnosis_result_badge') : 'Diagnosis Result')}
-        </span>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-bottom: 0.35rem;">
+          ${isAuto ? `
+            <span class="badge badge-info" style="font-size: 0.78rem;">
+              ${typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('auto_crop_detected') : '🔍 Auto-Detected'}: ${cropDisplay}
+            </span>
+          ` : `
+            <span class="badge badge-earth" style="font-size: 0.78rem;">
+              🌱 ${cropDisplay}
+            </span>
+          `}
+          <span class="badge ${isHealthy ? 'badge-success' : 'badge-warning'}" style="font-size: 0.78rem;">
+            ${isHealthy ? '✅ Healthy Plant' : '⚠️ ' + (typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('diagnosis_result_badge') : 'Diagnosis Result')}
+          </span>
+        </div>
         <h2 style="font-size: 1.45rem; color: var(--slate-900); margin: 0.25rem 0;">${diseaseName}</h2>
+        ${scientificCrop ? `<div style="font-size: 0.8rem; color: var(--slate-500); font-style: italic; margin-bottom: 0.2rem;">Botanical: ${scientificCrop}</div>` : ''}
+        ${pathogen ? `<div style="font-size: 0.82rem; color: var(--slate-600); margin-bottom: 0.25rem;"><strong>${typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('pathogen_label') : 'Pathogen'}:</strong> ${pathogen}</div>` : ''}
         <div style="font-size: 0.85rem; color: var(--slate-500);">
           ${typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('confidence_label') : 'Confidence Match'}: 
           <strong style="color: var(--primary-700);">${confidence}% Match</strong>
@@ -357,6 +399,18 @@ function renderDiagnosis(diag) {
       </div>
     ` : ''}
 
+    <!-- Possible Causes -->
+    ${possibleCauses && possibleCauses.length > 0 ? `
+      <div class="remedy-box" style="margin-bottom: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 0.85rem 1rem;">
+        <h4 style="font-size: 0.95rem; color: var(--slate-800); margin-bottom: 0.4rem;">
+          ${typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('causes_heading') : '🔬 Pathogen & Potential Causes:'}
+        </h4>
+        <ul style="padding-left: 1.25rem; font-size: 0.86rem; color: var(--slate-600); line-height: 1.5;">
+          ${possibleCauses.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>
+    ` : ''}
+
     <!-- Organic Remedies -->
     ${organicRemedies && organicRemedies.length > 0 ? `
       <div class="remedy-box" style="margin-bottom: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 0.85rem 1rem;">
@@ -381,6 +435,16 @@ function renderDiagnosis(diag) {
       </div>
     ` : ''}
 
+    <!-- Condition-Specific Fertilizer Advice -->
+    ${fertilizerAdvice ? `
+      <div class="remedy-box" style="margin-bottom: 1rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 0.85rem 1rem;">
+        <h4 style="font-size: 0.95rem; color: #1e40af; margin-bottom: 0.4rem;">
+          ${typeof AGRI_I18N !== 'undefined' ? AGRI_I18N.t('fertilizer_heading') : '🌱 Condition-Specific Fertilizer & Nutrition Advice:'}
+        </h4>
+        <p style="font-size: 0.86rem; color: #1d4ed8; line-height: 1.5; margin: 0;">${fertilizerAdvice}</p>
+      </div>
+    ` : ''}
+
     <!-- Prevention -->
     ${prevention ? `
       <div style="margin-bottom: 1rem;">
@@ -391,8 +455,15 @@ function renderDiagnosis(diag) {
       </div>
     ` : ''}
 
+    <!-- Model Mode -->
+    ${modelMode ? `
+      <div style="font-size: 0.78rem; color: var(--slate-500); margin-top: 0.75rem;">
+        ⚡ <em>Diagnostic Engine: ${modelMode}</em>
+      </div>
+    ` : ''}
+
     <!-- Disclaimer -->
-    <div style="margin-top: 1.25rem; padding-top: 0.75rem; border-top: 1px solid var(--slate-200); font-size: 0.78rem; color: var(--slate-500); line-height: 1.4;">
+    <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--slate-200); font-size: 0.78rem; color: var(--slate-500); line-height: 1.4;">
       ⚠️ <em>${diag.disclaimer || 'Advisory Note: AI outputs are decision-support recommendations. Consult local KVK officers for severe infestations.'}</em>
     </div>
   `;
